@@ -1,0 +1,142 @@
+@charset "UTF-8";
+@mixin round($top) {
+	-webkit-border-radius: $top;
+	-moz-border-radius: $top;
+	border-radius: $top;
+}
+/*** reset ***/
+html,body,h1,h2,h3,h4,h5,h6,p,dl,dd,ul,li,ol,form,input,img,textarea,th,tr,td,button,select{
+	margin:0;
+	padding:0;
+}
+html,body {
+	width: 100%;
+	font-size: 14px;
+	font-family: Microsoft YaHei,SimSun,Arial;
+	min-width:1200px;
+	background: #fff;
+	line-height: 1.4;
+	outline: none;
+	margin: 0 auto;
+	color: #000;
+	border: 0;
+}
+
+ul, li {list-style:none;}
+
+h1,h2,h3,h4,h5,h6 {font-weight: normal;}
+
+em,i {font-style: normal;}
+
+button, label{cursor: pointer;}
+
+a {
+	outline: none;
+	display: inline-block;
+	text-decoration: none;
+	color: #000;
+}
+
+a:hover {text-decoration: none;cursor: pointer;}
+
+a:link, a:visited{ color: #000;}
+
+a:focus {outline:none;-moz-outline:none;}
+
+button::-moz-focus-inner {border:0;}
+
+img {border: none;vertical-align: top;}
+
+table {border-spacing: 0;}
+
+input[type="radio"], input[type="checkbox"] {
+	position: relative;
+	vertical-align: middle;
+	outline: none;
+}
+
+img,input,textarea,select,button {
+	outline: none;
+	border: 0;
+}
+
+input[type='text']{color: #333;}
+
+textarea {
+	resize: none;
+	overflow: auto;
+	background: none;
+	color: #333;
+}
+
+/* end reset */
+/* public */
+.icon, .icon_bf:before, .icon_af:after, .icon_ab{
+	background:url(../images/icons.png) no-repeat;
+	display:inline-block;
+	position: relative;
+}
+.icon_bf:before, .icon_af:after, .icon_ab{
+	content:'';
+}
+.ic_icon:before{background-position: -37px -45px;}
+.od_icon:before{background-position: 0 -45px;}
+.gd_icon:before{background-position: -90px 0;}
+.wl_icon:before{background-position: -90px -37px;}
+.edit_icon:after{width: 18px;height: 18px;background-position: -128px -26px;}
+.dele_icon:after{width: 16px;height: 16px;background-position: -60px -84px;}
+
+.pack_icon:after{width: 5px;height: 12px;background-position: -154px -116px;}
+.spread_icon:after{width: 5px;height: 12px;background-position: -154px -99px;}
+
+/* 字体大小 */
+.font-0{font-size:0px;}
+.font-14{font-size:14px;}
+.font-16{font-size:16px;}
+.font-18{font-size:18px;}
+.font-20{font-size:20px;}
+.font-22{font-size:22px;}
+.font-24{font-size: 24px;}
+
+/* 公共颜色 */
+.blue_dark{color: #42a0ff;}			//深蓝色
+.blue_light{color: #56aaff;}		//浅蓝色
+.yellow{color: #ffc108;}			//黄色
+.warning{color: #f00;}				//红色警告
+.c000{color: #000;}					//黑色
+.c333{color: #333;}
+.c666{color: #666;}
+.c999{color: #999;}
+.cfff{color: #fff;}
+.round{border: 1px solid #e5e5e5;}
+
+.show{display:block !important;}
+.hide{display:none !important;}
+.font-s{font-family: Sim Sun !important;}
+.font-m{font-family: Microsoft YaHei !important;}
+.font-a{font-family: Arial !important;}
+.table{
+	th{font-weight:normal;
+		text-align: center;
+	}
+	td,th{
+		padding: 0 10px;
+	}
+}
+.clear:after{
+	content:'';
+	display:block;
+	clear:both;
+	height:0;
+}
+.clear{*zoom:1;}
+.tac{text-align:center;}
+.tal{text-align:left;}
+.tar{text-align:right;}
+.pl{position:relative;}
+.fixed{position:fixed;}
+.fl{float: left;}
+.fr{float: right;}
+
+.txt-oh{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}		//文字溢出隐藏,  显示省略号
+.txt-ov{overflow:hidden;white-space:pre-wrap;word-break:break-all;} 	//文字溢出隐藏,不显示省略号
