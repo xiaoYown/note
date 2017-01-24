@@ -70,6 +70,67 @@ function Add(left: number, right: number = 10): number {
 	return left + right;
 }
 ```
+####可选参数 
+可选参数不能写在必填参数后面
+```typescript
+function Add(left: number, top:?:number,right: number = 10): number {
+	return left + right;
+}
+```
+####Rest and Spread操作符
+用来声明任意数量的的方法参数
+```typescript
+function fn(...args){
+}
+```
+```javascript
+// es6 固定数量参数
+function fn(a,b,c){
+    var arr = [1,2];
+}
+fn(...arr); // 报错
+```
+####generator函数
+控制函数的执行过程,手工回复代码的执行
+```javascript
+// es6
+function* fn(){
+     console.log("start");
+    yield;
+    console.log("end");
+}
+var fn1 = fn();
+fn1.next(); // start
+fn2.next(); // end
+```
+####destructuring析构表达式
+```typescript
+// 对象取值
+function getStock(){
+   return {
+    code: "IBM",
+    price: 100,
+    obj: {
+        obj1: "1",
+        obj2:  "2"
+    }
+}
+var { code, price } = getStock();
+var { code: codex, price } = getStock(); // 别名
+var { obj: {obj2} } = getStock(); // 获取嵌套属性
+var arr = [1,2,3,4];
+var [num1,num2] = arr;
+console.log(num1); // 1
+console.log(num2); // 2
+var [,num2,,num4] = arr;
+console.log(num2); // 2
+console.log(num4); // 4
+// rest操作符
+var [num1,num2,...args] = arr;
+console.log(num1); // 1
+console.log(num2); // 2
+console.log(args); // [3,4]
+```
 ####箭头函数表达式（lambda表达式）
 >lambda表达式 ()=>{something}或()=>something 相当于js中的函数,它的好处是可以自动将函数中的this附加到上下文中。
 ```typescript

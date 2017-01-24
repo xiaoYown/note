@@ -1,0 +1,27 @@
+安装openssh-server
+$ sudo apt-get install openssh-server
+
+查看openssh-server是否启动
+$ ps -e | grep ssh
+进程ssh-agent是客户端，sshd为服务器端，如果结果中有sshd的进程说明openssh-server已经启动，如果没有则需运行命令启动。
+
+启动、停止和重启openssh-server的命令如下
+/etc/init.d/ssh start
+/etc/init.d/ssh stop
+/etc/init.d/ssh restart
+
+配置openssh-server
+openssh-server配置文件位于/etc/ssh/sshd_config，在这里可以配置SSH的服务端口等，例如：默认端口是22，可以自定义为其他端口号，如222，然后需要重启SSH服务。
+
+关闭ssh登录到root用户
+开放ssh登录root权限是非常危险的，所以不是特别需要，应该关闭该权限，在配置文件/etc/ssh/sshd_config中找到PermitRootLogin yes一行，将yes改为no然后重启ssh即可。
+
+Ubuntu中配置openssh-server开机自动启动
+打开/etc/rc.local文件，在exit 0语句前加入：
+/etc/init.d/ssh start
+
+关于客户端连接
+客户端可以用putty、SecureCRT、SSH Secure Shell Client等SSH 客户端软件，输入您服务器的IP地址，并且输入登录的用户和密码就可以登录了。我常选择的客户端软件是putty。
+
+关于ssh的加密
+实际上ssh的使用远不止这些，ssh还有很重要的一部分内容，那就是ssh通过公钥私钥进行加密，例如git就可以采用加密ssh的方式访问。关于ssh的加密这里暂不讨论，有机会再补充，可以查看相关资料了解。
