@@ -48,8 +48,12 @@
 			remainder = String.fromCharCode(remainder + 87);
 		}
 
-		if( merchant < 16 ){
-			return (merchant == 0 ? '' : String.fromCharCode(merchant + 87)) + remainder
+		if( merchant == 0 ){
+			return remainder
+		}else if( merchant < 10 ){
+			return merchant.toString() + remainder
+		}else if( merchant < 16 ){
+			return String.fromCharCode(merchant + 87) + remainder
 		} else {
 			return Hex.t_s(merchant) + remainder
 		}
