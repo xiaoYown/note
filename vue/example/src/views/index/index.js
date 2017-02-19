@@ -21,7 +21,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/to/:link',
+		path: '/to:link',
 		name: 'to',
 		component: require('components/to.vue'),
 		meta: {

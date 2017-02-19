@@ -1,7 +1,7 @@
 <template lang="jade">
 	nav.nav-demo
 		.nav-content
-			router-link.select.link(:to="{ path: '/to', name: 'to', params: { link: '/', back: '/demo.html' } }") link-demo
+			router-link.select.link(:to="{ name: 'to', params: { link: '/', back: '/demo.html' } }") home
 			router-link.select.link(to="/") demo
 			router-link.select.link(to="/foo") foo
 			router-link.select.link(to="/bar") bar

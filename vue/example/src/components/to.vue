@@ -7,9 +7,9 @@
 	export default {
 		beforeCreate(){
 			if( this.$root.show )
-				window.location.href = `${this.$route.params.link}`;
+				window.location.href = this.$route.params.link;
 			else
-				this.$router.push({ path: `${this.$route.params.back}` });
+				this.$router.push({ path: this.$route.params.back });
 		}
 	}
 </script>
