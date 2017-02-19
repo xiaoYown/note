@@ -5,7 +5,8 @@
 			div
 				h4.user-name {{ userInfo.name }} 
 				| welcome !
-			a(href="demo.html#/") demo
+				br
+				router-link(:to="{ path: '/to', name: 'to', params: { link: '/demo.html', back: '/' } }") link-demo
 </template>
 
 <script>
@@ -17,12 +18,11 @@
 	export default{
 
 		computed: mapState({
-			userInfo: state => state.index.userInfo,
+			userInfo: state => state.user.userInfo,
 		}),
 		created(){
 			let userName = getCookie('session');
 			if( !!userName ){
-			console.log(userName)
 				this.saveUserInfo({
 					method: 'put',
 					data: {

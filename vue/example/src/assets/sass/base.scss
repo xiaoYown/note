@@ -11,4 +11,11 @@
 .icon_bf:before, .icon_af:after, .icon_ab{
 	content:'';
 }
+// 透明过渡
+.fade-enter-active, .fade-leave-active{
+	transition: all .4s linear;
+}
+.fade-enter, .fade-leave-active{
+	opacity: 0
+}
 

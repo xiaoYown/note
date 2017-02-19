@@ -2,7 +2,8 @@ import Vue 				from 'vue';
 import Vuex 			from 'vuex';
 
 import middlewares 		from '../middlewares';
-import demo 			from '../modules/demo';
+
+import user 			from '../modules/demo/user';
 
 Vue.config.debug = true;
 Vue.use(Vuex);
@@ -10,7 +11,7 @@ Vue.config.warnExpressionErrors = false;
 
 const store = new Vuex.Store({
 	modules: {
-		demo,
+		user,
 	},
     strict: process.env.NODE_ENV !== 'production',
     middlewares

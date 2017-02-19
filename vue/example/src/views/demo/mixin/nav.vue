@@ -1,7 +1,7 @@
 <template lang="jade">
 	nav.nav-demo
 		.nav-content
-			a.select.link(href="/") home
+			router-link.select.link(:to="{ path: '/to', name: 'to', params: { link: '/', back: '/demo.html' } }") link-demo
 			router-link.select.link(to="/") demo
 			router-link.select.link(to="/foo") foo
 			router-link.select.link(to="/bar") bar
@@ -16,7 +16,7 @@
 
 	export default {
 		computed: mapState({
-    		userInfo: state => state.demo.userInfo,
+    		userInfo: state => state.user.userInfo,
     	}),
     	created(){
 			let userName = getCookie('session');

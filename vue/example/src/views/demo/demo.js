@@ -3,7 +3,7 @@ import VueRouter 	from 'vue-router';
 import VueResource  from 'vue-resource';
 import { sync } 	from 'vuex-router-sync';
 
-import App 			from './app.vue';
+import App 			from './app-demo.vue';
 import lazy 		from 'vue-lazy-component';
 import { getCookie } from 'tools/client';
 import store 		from 'vueX/store/demo';
@@ -36,6 +36,14 @@ const routes = [
 	},
 	{ 	path: '/login', 	
 		name: 'login',
+	},
+	{
+		path: '/to/:link',
+		name: 'to',
+		component: require('components/to.vue'),
+		meta: {
+			user: false,
+		},
 	},
 	{ 	path: '*', 	
 		component: require('Views/404.vue'),

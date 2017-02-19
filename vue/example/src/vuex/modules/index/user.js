@@ -1,6 +1,6 @@
 import Vue								from 'vue';
-import api								from '../api';
-import * as types 						from '../types';
+import api								from 'vueX/api';
+import * as types 						from './types';
 import { saveCookie } 					from 'tools/client'; 
 import { httpResponse, getAttribute } 	from 'tools/utils'; 
 

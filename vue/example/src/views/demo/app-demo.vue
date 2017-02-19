@@ -19,9 +19,11 @@
 </style>
 <template lang="jade">
 	.content
-		nav-demo
-		transition(name="fade" mode="out-in")
-			router-view
+		transition(name="fade",mode="out-in")
+			div(v-show="show")
+				nav-demo
+				transition(name="fade",mode="out-in")
+					router-view
 </template>
 
 <script>
@@ -30,6 +32,17 @@
 	export default {
 		components: {
 			'nav-demo': require('./mixin/nav.vue'),
+		},
+		data(){
+			return {
+				show: false,
+			}
+		},
+		created(){
+			this.show = false;
+		},
+		mounted(){
+			this.show = true;
 		},
 	}
 </script>

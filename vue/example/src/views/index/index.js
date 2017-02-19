@@ -5,7 +5,7 @@ import { sync } 	from 'vuex-router-sync';		//同步vuex与路由的状态
 
 import {getCookie}  from 'tools/client';
 
-import App 			from './app.vue';
+import App 			from './app-index.vue';
 import store 		from 'vueX/store/index';
 
 
@@ -17,15 +17,29 @@ const routes = [
 		component: require('Views/index/index.vue'),
 		name: 'index',
 		meta: {
-			user: true
-		}
+			user: true,
+		},
+	},
+	{
+		path: '/to/:link',
+		name: 'to',
+		component: require('components/to.vue'),
+		meta: {
+			user: false,
+		},
 	},
 	{ 	path: '/login', 	
 		component: require('components/login.vue'), 
 		name: 'login',
+		meta: {
+			user: false,
+		},
 	},
 	{ 	path: '*', 	
 		component: require('Views/404.vue'),
+		meta: {
+			user: false,
+		},
 	},
 ];
 
