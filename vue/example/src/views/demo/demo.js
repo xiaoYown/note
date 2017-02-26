@@ -12,27 +12,66 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(lazy);
 
+const UserProfile = {
+	template: '<p>children-1</p>',
+};
+
+const UserPosts = {
+	template: '<p>children-2</p>',
+};
+
+
 const routes = [
 	{ 	path: '/', 	
 		name: 'demo',
 		component: require('./views/index.vue'),
 		meta: {
-			user: true
+			user: true,
 		},
 	},
 	{ 	path: '/foo',
-		name: 'sdemo-foo',
+		name: 'demo-foo',
 		component: require('./views/foo.vue'),
 		meta: {
-			user: true
+			user: true,
 		},
 	},
 	{ 	path: '/bar', 	
 		name: 'demo-bar',
 		component: require('./views/bar.vue'),
 		meta: {
-			user: true
+			user: true,
 		},
+	},
+	{
+		path: '/params/:name/:age',
+		name: 'params',
+		component: require('./views/params.vue'),
+		meta: {
+			user: true,
+		},
+	},
+	{
+		path: '/nested/:id',
+		name: 'nested',
+		component: require('./views/nested.vue'),
+		meta: {
+			user: true,
+		},
+		children: [
+        {
+          // 当 /user/:id/profile 匹配成功，
+          // UserProfile 会被渲染在 User 的 <router-view> 中
+          path: 'profile',
+          component: UserProfile
+        },
+        {
+          // 当 /user/:id/posts 匹配成功
+          // UserPosts 会被渲染在 User 的 <router-view> 中
+          path: 'posts',
+          component: UserPosts
+        }
+      ]
 	},
 	{ 	path: '/login', 	
 		name: 'login',
