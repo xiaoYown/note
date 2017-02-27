@@ -6,7 +6,7 @@ import { sync } 	from 'vuex-router-sync';		//同步vuex与路由的状态
 import {getCookie}  from 'tools/client';
 
 import App 			from './app-index.vue';
-import store 		from 'vueX/store/index';
+import store 		from 'Store/index';
 
 
 Vue.use(VueRouter);

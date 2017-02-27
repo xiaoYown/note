@@ -1,8 +1,7 @@
 <template lang="jade">
     .wrap-demo-nested
-        div {{ $route.params.id }}
-        router-link(to="/nested/foo/profile") childrent-1
-        router-link(to="/nested/foo/posts") childrent-2
+        router-link(to="/nested/1") childrent-1
+        router-link(to="/nested/2") childrent-2
         router-view
 </template>
 

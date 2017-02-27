@@ -5,7 +5,8 @@
 			router-link.select.link(to="/") demo
 			router-link.select.link(to="/foo") foo
 			router-link.select.link(to="/bar") bar
-			router-link.select.link(:to="{name: 'nested', params: {id: 'foo'}}") nested
+			router-link.select.link(to="/vuex") vuex
+			router-link.select.link(to="/nested") nested
 			router-link.select.link(:to="{ name: 'params', params: { name: userInfo.name, age: 12 } }") params
 			div.select.user-name {{ userInfo.name }}
 </template>

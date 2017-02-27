@@ -6,18 +6,18 @@ import { sync } 	from 'vuex-router-sync';
 import App 			from './app-demo.vue';
 import lazy 		from 'vue-lazy-component';
 import { getCookie } from 'tools/client';
-import store 		from 'vueX/store/demo';
+import store 		from 'Store/demo';
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(lazy);
 
 const UserProfile = {
-	template: '<p>children-1</p>',
+	template: '<div>children-1</div>',
 };
 
 const UserPosts = {
-	template: '<p>children-2</p>',
+	template: '<div>children-2</div>',
 };
 
 
@@ -52,26 +52,33 @@ const routes = [
 		},
 	},
 	{
-		path: '/nested/:id',
-		name: 'nested',
+		path: '/vuex',
+		name: 'vuex',
+		component: require('./views/vuex.vue'),
+		meta: {
+			user: true,
+		},
+	},
+	{
+		path: '/nested',
 		component: require('./views/nested.vue'),
 		meta: {
 			user: true,
 		},
 		children: [
-        {
-          // 当 /user/:id/profile 匹配成功，
-          // UserProfile 会被渲染在 User 的 <router-view> 中
-          path: 'profile',
-          component: UserProfile
-        },
-        {
-          // 当 /user/:id/posts 匹配成功
-          // UserPosts 会被渲染在 User 的 <router-view> 中
-          path: 'posts',
-          component: UserPosts
-        }
-      ]
+			{
+				// 当 /user/:id/profile 匹配成功，
+				// UserProfile 会被渲染在 User 的 <router-view> 中
+				path: '1',
+				component: UserProfile
+			},
+			{
+				// 当 /user/:id/posts 匹配成功
+				// UserPosts 会被渲染在 User 的 <router-view> 中
+				path: '2',
+				component: UserPosts
+			}
+		]
 	},
 	{ 	path: '/login', 	
 		name: 'login',

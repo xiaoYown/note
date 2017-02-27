@@ -72,8 +72,8 @@ module.exports = {
 			'components': path.resolve(__dirname, '../src/components'),
 			'ui'		: path.resolve(__dirname, '../src/components/ui'),
 			'plugin'	: path.resolve(__dirname, '../src/plugin'),
+			'Store'		: path.resolve(__dirname, '../src/store'),
 			'Views'		: path.resolve(__dirname, '../src/views'),
-			'vueX'		: path.resolve(__dirname, '../src/vuex'),
 			'utils'		: path.resolve(__dirname, '../src/utils'),
 			'tools'		: path.resolve(__dirname, '../src/tools'),
 			'dist'		: path.resolve(__dirname, '../dist')

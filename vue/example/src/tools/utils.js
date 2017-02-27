@@ -16,10 +16,13 @@ export function httpResponse(api,success,error) {
 export function getAttribute(obj_1, obj_2 ){
     obj_2 = obj_2 || {};
     for( let key in obj_1 ){   // 只提取需要覆盖的属性
-        if( obj_1[key].constructor != Object ){
-            obj_2[key] = obj_1[key];
+        if( !!obj_1[key] && typeof obj_1[key] == 'object' ){
+            if( Array.isArray(obj_1[key]) )
+                obj_2[key] = obj_1[key];
+            else
+                obj_2[key] = getAttribute(obj_1[key]);
         } else {
-            obj_2[key] = getAttribute(obj_1[key]);
+            obj_2[key] = obj_1[key];
         }
     }
     return obj_2
