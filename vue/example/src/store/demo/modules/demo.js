@@ -7,7 +7,7 @@ import * as types 						from './types';
 
 const state = {
     stateShow: {},
-    calData: {},
+    calData: 0,
 };
 /** state 操作说明
  *  @param String method get/add/del/put 请求首次获取 / 增 / 删 / 改 
