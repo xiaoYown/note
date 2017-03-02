@@ -20,14 +20,6 @@ const routes = [
 			user: true,
 		},
 	},
-	{
-		path: '/to:link',
-		name: 'to',
-		component: require('components/to.vue'),
-		meta: {
-			user: false,
-		},
-	},
 	{ 	path: '/login', 	
 		component: require('components/login.vue'), 
 		name: 'login',

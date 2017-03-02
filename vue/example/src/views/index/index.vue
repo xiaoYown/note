@@ -6,7 +6,7 @@
 				h4.user-name {{ userInfo.name }} 
 				| welcome !
 				br
-				router-link(:to="{ name: 'to', params: { link: '/demo.html', back: '/' } }") link-demo
+				a(href="./demo.html#/") link-demo
 </template>
 
 <script>

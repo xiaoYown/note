@@ -83,14 +83,6 @@ const routes = [
 	{ 	path: '/login', 	
 		name: 'login',
 	},
-	{
-		path: '/to:link',
-		name: 'to',
-		component: require('components/to.vue'),
-		meta: {
-			user: false,
-		},
-	},
 	{ 	path: '*', 	
 		component: require('Views/404.vue'),
 	},
