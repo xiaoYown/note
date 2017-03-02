@@ -31,6 +31,35 @@
 				margin-right: 10px;
 			}
 		}
+		.border-choose{
+			display: inline-block;
+			vertical-align: top;
+			width: 20px;
+			height: 20px;
+			line-height: 20px;
+			text-align: center;
+			margin-top: 8px;
+			margin-right: 8px;
+			color: #fff;
+			border-radius: 4px;
+			background-color: rgba(0,0,0,.5);
+			cursor: pointer;
+			&.selected{
+				background-color: #000;
+			}
+			&::selection{
+				background: none;
+				color: none;
+			}
+		}
+		.border-el{
+			width: 50px;
+			height: 40px;
+			margin-top: 10px;
+		}
+		input{
+			border: 1px solid #000;
+		}
 	}
 </style>
 
@@ -61,7 +90,18 @@
 			.vuex-option-wrap( v-for="value,key in stateShow" )
 				h4.title {{ key }} :
 				span {{value}}
-
+		.vuex-info-wrap
+			div
+				.border-choose(:class="{ selected: choosed.t }",@click.stop="choosePlace('t')") 上
+				.border-choose(:class="{ selected: choosed.b }",@click.stop="choosePlace('b')") 下
+				.border-choose(:class="{ selected: choosed.l }",@click.stop="choosePlace('l')") 左
+				.border-choose(:class="{ selected: choosed.r }",@click.stop="choosePlace('r')") 右
+				br
+				.border-choose(@click.stop="setBorder(1)") 1
+				.border-choose(@click.stop="setBorder(2)") 2
+				.border-choose(@click.stop="setBorder(3)") 3
+			div
+				.border-el(:style="jstyle")
 
 </template>
 
@@ -78,15 +118,31 @@
 					age: '',
 					email: '',
 					addr: '',
-				}
+				},
+				choosed: {
+					t: false,
+					b: false,
+					l: false,
+					r: false,
+				},
+				jstyle: {},
 			}
 		},
 		computed: mapState({
 			stateShow: state => state.demo.stateShow,
-			calData: state => state.demo.calData
+			calData: state => state.demo.calData,
+			style: state => state.demo.style,
 		}),
+		watch: {
+			style: {
+				handler(newVal){
+					this.getStyle();
+				},
+				deep: true,
+			}
+		},
 		methods: {
-			...mapActions(['saveStateShow', 'saveUserInfo', 'saveCalData']),
+			...mapActions(['saveStateShow', 'saveUserInfo', 'saveCalData', 'saveStyle']),
 			saveState(){
 				this.saveStateShow({
 					method: 'put',
@@ -113,13 +169,36 @@
 					method: 'put',
 					data,
 				})
+			},
+			getStyle(){
+				this.jstyle = {
+					borderTop: 		`${this.style.t}px solid #000`,
+					borderBottom: 	`${this.style.b}px solid #000`,
+					borderLeft: 	`${this.style.l}px solid #000`,
+					borderRight: 	`${this.style.r}px solid #000`,
+				};
+			},
+			choosePlace(place){
+				this.choosed[place] = !this.choosed[place];
+			},
+			setBorder(w){
+				
+				let style = {...this.style};
+
+				if( this.choosed.t )
+					style.t = w;
+				if( this.choosed.b )
+					style.b = w;
+				if( this.choosed.l )
+					style.l = w;
+				if( this.choosed.r )
+					style.r = w;
+
+				this.saveStyle({
+					method: 'put', 
+					data: style
+				});
 			}
 		}
 	}
 </script>
-
-<style lang="sass">
-	input{
-		border: 1px solid #000;
-	}
-</style>

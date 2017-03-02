@@ -8,6 +8,8 @@ import * as types 						from './types';
 const state = {
     stateShow: {},
     calData: 0,
+    border: {},
+    style: {},
 };
 /** state 操作说明
  *  @param String method get/add/del/put 请求首次获取 / 增 / 删 / 改 
@@ -28,6 +30,13 @@ const mutations = {
                 break;
         }
     },
+    [types.SAVE_STYLE]( state, payload ){
+        switch(payload.method){
+            case 'put':
+                state.style = payload.data;
+                break;
+        }
+    },
 };
 
 const actions = {
@@ -38,6 +47,9 @@ const actions = {
     saveCalData: ({ commit }, param) => {
         commit(types.SAVE_CAL_DATA, param);
     },
+    saveStyle: ({ commit }, param) => {
+        commit(types.SAVE_STYLE, param);
+    }
 };
 
 export default {
