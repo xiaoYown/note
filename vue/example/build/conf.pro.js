@@ -50,7 +50,7 @@ Object.keys(baseWebpack.entry).forEach(function(name){
 
 var newWebpack = merge(baseWebpack, {
 	output: {
-		filename: 		utils.assetsPath('js/[name].js?[chunkhash]')
+		filename: utils.assetsPath('js/[name].js?[chunkhash]')
 	},
 	module: {
 		loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
