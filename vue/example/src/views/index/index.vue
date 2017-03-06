@@ -7,6 +7,8 @@
 				| welcome !
 				br
 				a(href="./demo.html#/") link-demo
+				br
+				a(href="./components.html#/") link-components
 </template>
 
 <script>

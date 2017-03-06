@@ -1,6 +1,6 @@
 const router = require('koa-router')();
 
-router.get('/', function *(ctx, next) {
+router.get('/', function *(next) {
 
     await ctx.render('index', {
         title: '首页',

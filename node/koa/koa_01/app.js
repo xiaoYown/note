@@ -9,6 +9,7 @@ const co 			= require('co');
 const convert 		= require('koa-convert');
 const json 			= require('koa-json');
 const onerror 		= require('koa-onerror');
+const bodyparser 	= require('koa-bodyparser')();
 const logger 		= require('koa-logger');
 const redisStore 	= require('koa-redis');
 
@@ -17,7 +18,7 @@ const Router = require('koa-router');
 const router = Router();
 
 var wrapper = require('co-mysql'),
-	mysql 	= require('mysql');
+	mysql 	= require('mysql'); 
 
 var options = {
     host : 'localhost',
@@ -30,12 +31,11 @@ var options = {
 var pool = mysql.createPool(options),
 	p = wrapper(pool);
 
-onerror(app);
-
-// 监听url请求
-
-// logger
+app.use(convert(require('koa-static2')("/static", __dirname + '/static')));
+app.use(convert(bodyparser));
+app.use(convert(json()));
 app.use(convert(logger()));
+onerror(app);
 
  render(app, {
 	root: path.join(__dirname, 'views'),
@@ -47,13 +47,18 @@ app.use(convert(logger()));
 
 var myRouter = new Router();
 
-router.get('/', function *(next) {
-	var rows = yield p.query('SELECT * FROM AUTHORS WHERE email=511687372');
+router
+	.get('/', function *( next ) {
+		var rows = yield p.query('SELECT * FROM AUTHORS WHERE email=511687372 LIMIT 1');
 
-	console.log(rows)
+		console.log(rows)
 
-	yield this.render('index', {layout: false, title: '首页'});
-});
+		yield this.render('index', {layout: false, title: '首页'});
+	})
+	.post('/register', function *( next ) {
+		console.log(this.req)
+	}, router.allowedMethods());
+
 
 app.use(router.routes());
 
