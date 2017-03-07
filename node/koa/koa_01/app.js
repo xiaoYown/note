@@ -46,7 +46,10 @@ onerror(app);
 });
 
 var myRouter = new Router();
-
+/**
+ * 插入列: alter table table_name add column col_name varchar(30)
+ * 插入行: inert into table_name (col1_name,col2_name) values (col1_val, col2_val) 
+ */
 router
 	.get('/', function *( next ) {
 		var rows = yield p.query('SELECT * FROM AUTHORS WHERE email=511687372 LIMIT 1');
