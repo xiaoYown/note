@@ -1,12 +1,12 @@
 <template lang="jade">
-	.its-range-wrap(@dragover.prevent="")
-		.its-range-runway(
+	.xy-range-wrap(@dragover.prevent="")
+		.xy-range-runway(
 			ref="runway",
 			@click.stop="progressChoose"
 		)
-			.its-range-progress(:style="{ width: axis.w*100 + '%' }")
-				span.its-range-thumb
-					span.its-range-thumb-shadow(
+			.xy-range-progress(:style="{ width: axis.w*100 + '%' }")
+				span.xy-range-thumb
+					span.xy-range-thumb-shadow(
 						ref="shadow",
 						draggable="true",
 						@dragstart="dragstart",
@@ -76,12 +76,12 @@
 </script>
 
 <style lang="sass">
-	.its-rang-wrap{
+	.xy-rang-wrap{
 		position: relative;
 		height: 16px;
 		line-height: 16px;
 	}
-	.its-range-runway{
+	.xy-range-runway{
 		position: relative;
 		display: inline-block;
 		vertical-align: middle;
@@ -90,7 +90,7 @@
 		background-color: #e8e9ef;
 		cursor: pointer;
 	}
-	.its-range-progress{
+	.xy-range-progress{
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -98,7 +98,7 @@
 		background-color: #bbbdc3;
 		transition: width .1s;
 	}
-	.its-range-thumb{
+	.xy-range-thumb{
 		position: absolute;
 		width: 16px;
 		height: 16px;
@@ -108,7 +108,7 @@
 		background-color: #4c7cf7;
 		cursor: pointer;
 	}
-	.its-range-thumb-shadow{
+	.xy-range-thumb-shadow{
 		display: block;
 		width: 100%;
 		height: 100%;

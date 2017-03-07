@@ -86,7 +86,7 @@
 				button(@click="saveState") submit
 		.vuex-info-wrap
 			.vuex-option-wrap
-				{{ calData }}
+			| {{ calData }}
 			.vuex-option-wrap( v-for="value,key in stateShow" )
 				h4.title {{ key }} :
 				span {{value}}

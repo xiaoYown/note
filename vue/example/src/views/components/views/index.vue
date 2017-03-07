@@ -6,12 +6,17 @@
 				@open-change="openChange"
 			)
 				p.inline {{ switchOpen }}
-			.ui-components-wrap
+		.ui-components-wrap
 			xy-range(
 				:percent="rangeNum",
 				@range-change="rangeChange"
 			)
 			p {{ rangeNum }}
+		.ui-components-wrap
+			xy-select(
+				:list="selectList",
+				@select-change="selectChange"
+			)
 </template>
 
 <script>
@@ -19,11 +24,31 @@
 		components :{
 			'xy-switch': require('components/ui/switch.vue'),
 			'xy-range':  require('components/ui/range.vue'),
+			'xy-select':  require('components/ui/select.vue'),
 		},
 		data(){
 			return {
 				switchOpen: true,
 				rangeNum: 0.5,
+				selectList: [
+					{
+						id: '1',
+						ct: '1111',
+						checked: false,
+					},{
+						id: '2',
+						ct: '2222',
+						checked: false,
+					},{
+						id: '3',
+						ct: '333',
+						checked: false,
+					},{
+						id: '4',
+						ct: '4444',
+						checked: false,
+					}
+				]
 			}
 		},
 		methods: {
@@ -32,6 +57,9 @@
 			},
 			rangeChange(range){
 				this.rangeNum = range;
+			},
+			selectChange(id){
+				console.log(id)
 			}
 		}
 
@@ -54,7 +82,7 @@
 	.ui-components-wrap{
 		padding: 20px;
 
-		.its-range-wrap{
+		.xy-range-wrap{
 			width: 200px;
 		}
 	}

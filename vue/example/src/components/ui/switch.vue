@@ -1,7 +1,7 @@
 <template lang="jade">
-    label.its-switch-wrap
-        input(type="checkbox",v-model="_open",@change="change").its-switch-input
-        span.its-switch-core
+    label.xy-switch-wrap
+        input(type="checkbox",v-model="_open",@change="change",ref="input").xy-switch-input
+        span.xy-switch-core
         slot
 
 </template>
@@ -24,14 +24,14 @@
         },
         methods: {
             change(){
-                this.$emit('open-change', this._open);
+                this.$emit('open-change', this.$refs.input.checked);
             }
         },
     }
 </script>
 
 <style lang="sass">
-    .its-switch-core{
+    .xy-switch-core{
         position: relative;
         display: inline-block;
         vertical-align: middle;
@@ -68,10 +68,10 @@
             transition: left .3s;
         }
     }
-    .its-switch-input{
+    .xy-switch-input{
         display: none;
         &:checked{
-            &+.its-switch-core{
+            &+.xy-switch-core{
                 text-align: right;
                 border: 1px solid #3b6ae1;
                 background-color: #3b6ae1;
