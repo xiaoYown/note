@@ -29,12 +29,12 @@ var options = {
 };
 
 var pool = mysql.createPool(options),
-	p = wrapper(pool);
+	db_operate = wrapper(pool);
 
 app.use(convert(require('koa-static2')("/static", __dirname + '/static')));
 app.use(convert(bodyparser));
 app.use(convert(json()));
-app.use(convert(logger()));
+// app.use(convert(logger()));
 onerror(app);
 
  render(app, {
@@ -47,6 +47,8 @@ onerror(app);
 
 var myRouter = new Router();
 /**
+ * 创建表: CREATE TABLE IF NOT EXISTS user_info ( user_id VARCHAR(30), user_pwd VARCHAR(30) )
+ * 
  * 查询:   select * from table_name where __key__=__value__ (limit 1)
  * 
  * 插入列(首部): alter table table_name add  column col_name varchar(30) first
@@ -59,15 +61,26 @@ var myRouter = new Router();
  */
 router
 	.get('/', function *( next ) {
-		var rows = yield p.query('SELECT * FROM AUTHORS WHERE email=511687372 LIMIT 1');
+		// var rows = yield db_operate.query('SELECT * FROM AUTHORS WHERE email=511687372 LIMIT 1');
 
-		console.log(rows)
+		// console.log(rows)
 
 		yield this.render('index', {layout: false, title: '首页'});
 	})
 	.post('/register', function *( cxt, next ) {
-		console.log(this.request.body)
-		this.body = 'success'
+		let body = this.request.body;
+		if( !!body.user_id && body.user_pwd ){
+			console.log(`SELECT * FROM user_info WHERE EXISTS user_id="${body.user_id}"`)
+			// let exists = yield db_operate.query(`SELECT * FROM user_info WHERE EXISTS user_id="${body.user_id}"`)
+			// console.log(exists)
+			// yield db_operate.query(`INSERT INTO user_info (user_id, user_pwd) VALUES ("${body.user_id}","${body.user_pwd}")`);
+
+			this.body = {
+				code: '000000',
+				success: true,
+				message: '注册成功',
+			};
+		}
 	}, router.allowedMethods());
 
 
