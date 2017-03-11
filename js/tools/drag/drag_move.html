@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<style type="text/css">
+		
+		.xy-drag-container{
+			display: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			border: 1px solid #999;
+			width: 100px;
+			height: 100px;
+			box-sizing: border-box;
+		}
+		.xy-drag-container-resize{
+			position: absolute;
+			border: 1px solid #999;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			box-sizing: border-box;
+			background-color: #fff;
+			cursor: pointer;
+		}
+		.xy-resize-top-left{
+			top: -5px;
+			left: -5px;
+		}
+		.xy-resize-top-center{
+			top: -5px;
+			left: 50%;
+			margin-left: -5px;
+		}
+		.xy-resize-top-right{
+			top: -5px;
+			right: -5px;
+		}
+		.xy-resize-middle-left{
+			top: 50%;
+			left: -5px;
+			margin-top: -5px;
+		}
+		.xy-resize-middle-right{
+			top: 50%;
+			right: -5px;
+			margin-top: -5px;
+		}
+		.xy-resize-bottom-left{
+			bottom: -5px;
+			left: -5px;
+		}
+		.xy-resize-bottom-center{
+			bottom: -5px;
+			left: 50%;
+			margin-left: -5px;
+		}
+		.xy-resize-bottom-right{
+			bottom: -5px;
+			right: -5px;
+		}
+		.box{
+			display: inline-block;
+			vertical-align: top;
+			width: 300px;
+			height: 300px;
+			background-color: #56aaff;
+			margin: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="shadow"></div>
+	<div class="xy-drag-container hide" draggable="true">
+		<span class="xy-drag-container-resize xy-resize-top-left"></span>
+		<span class="xy-drag-container-resize xy-resize-top-center"></span>
+		<span class="xy-drag-container-resize xy-resize-top-right"></span>
+		<span class="xy-drag-container-resize xy-resize-middle-left"></span>
+		<span class="xy-drag-container-resize xy-resize-middle-right"></span>
+		<span class="xy-drag-container-resize xy-resize-bottom-left"></span>
+		<span class="xy-drag-container-resize xy-resize-bottom-center"></span>
+		<span class="xy-drag-container-resize xy-resize-bottom-right"></span>
+	</div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+</body>
+</html>
+<script type="text/javascript" src="./drag_move.js"></script>
+<script type="text/javascript">
+	'use strict';
+	var wrap = document.querySelector('.xy-drag-container'),
+		shadow = document.querySelector('.shadow');
+
+	var newDrag = XyDragmove({
+		el: wrap
+	});
+	var boxs = document.querySelectorAll('.box');
+	for(var i = 0, len = boxs.length; i < len; i++ ){
+		boxs[i].addEventListener('click', function(event){
+
+			event.stopPropagation();
+			let coord = {
+				x: event.target.offsetLeft,
+				y: event.target.offsetTop,
+				w: event.target.clientWidth,
+				h: event.target.clientHeight,
+			};
+			console.log(coord)
+			newDrag.set_coord(coord);
+			if( !newDrag.is_show ){
+				newDrag.is_show = true; // 开启可见
+			}
+		}, false);
+	}
+</script>
