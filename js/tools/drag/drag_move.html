@@ -102,7 +102,14 @@
 		shadow = document.querySelector('.shadow');
 
 	var newDrag = XyDragmove({
-		el: wrap
+		el: wrap,
+		isResize: true,
+		dragmove: function(axis){
+			// console.log(axis)
+		},
+		dragend: function(axis){
+			// console.log(axis)
+		}
 	});
 	var boxs = document.querySelectorAll('.box');
 	for(var i = 0, len = boxs.length; i < len; i++ ){
@@ -115,7 +122,6 @@
 				w: event.target.clientWidth,
 				h: event.target.clientHeight,
 			};
-			console.log(coord)
 			newDrag.set_coord(coord);
 			if( !newDrag.is_show ){
 				newDrag.is_show = true; // 开启可见

@@ -32,11 +32,12 @@ XyDragmove.prototype = {
 		if( !!this.el ) return;
 
 		this.el 	= el;
+		this.resizes = [];
 
 		/* 回调绑定 */
-		this._dragstart 	= dragstart;
-		this._dragmove  	= dragmove;
-		this._dragend   	= dragend;
+		this._dragstart 	= dragstart	|| function(){};
+		this._dragmove  	= dragmove	|| function(){};
+		this._dragend   	= dragend	|| function(){};
 		this._rotatestart 	= rotatestart;
 		this._rotating 		= rotating;
 		this._rotateend 	= rotateend;
@@ -98,10 +99,17 @@ XyDragmove.prototype = {
 		this.el.addEventListener('drag', this.dragmove.bind(this), false);
 		this.el.addEventListener('dragend', this.dragend.bind(this), false);
 	},
-	bind_rezie: function(){
+	off_move: function(){
+		this.el.removeEventListener('dragstart', this.dragstart.bind(this), false);
+		this.el.removeEventListener('drag', this.dragmove.bind(this), false);
+		this.el.removeEventListener('dragend', this.dragend.bind(this), false);
+	},
+	bind_resize: function(){
 		if( this.resizes.length > 0 ) return;
 
-		let frag = document.createFragement(),
+		let _this = this;
+
+		let frag = document.createDocumentFragment(),
 			resize = null,
 			resizes = [
 			'xy-resize-top-left',
@@ -120,6 +128,21 @@ XyDragmove.prototype = {
 			frag.append(resize);
 		}
 		this.el.appendChild(frag);
+
+		for( let i = 0, len = this.el_resizes.length; i < len; i++ ){
+			this.el_resizes[i].addEventListener('dragstart', function(event){
+				event.stopPropagation();
+				_this.dragstart.call(_this, event, i);	
+			}, false);
+			this.el_resizes[i].addEventListener('drag', function(event){
+				event.stopPropagation();
+				_this.resizing.call(_this, event, i);
+			}, false);
+			this.el_resizes[i].addEventListener('dragend', function(event){
+				event.stopPropagation();
+				this.resizeend.call(_this, event, i)
+			}, false);
+		}
 	},
 	bind_rotate: function(){
 		
@@ -136,23 +159,37 @@ XyDragmove.prototype = {
 		event.dataTransfer.setDragImage(shadow, 0,  0);
 		this.mouse.x = event.clientX;
 		this.mouse.y = event.clientY;
+
+		this._dragstart(this.axis_bf);
 	},
 	dragmove(event){
 		event.stopPropagation();
 		if( event.clientX == 0 && event.clientY == 0 ) return;
-		this.axis.x = this.axis_bf.x + event.clientX - this.mouse.x;
-		this.axis.y = this.axis_bf.y + event.clientY - this.mouse.y;
+		let axis = {
+			x: this.axis_bf.x + event.clientX - this.mouse.x,
+			y: this.axis_bf.y + event.clientY - this.mouse.y,
+		}
+		this.axis.x = axis.x;
+		this.axis.y = axis.y;
+		this._dragmove(axis);
 	},
 	dragend: function(event){
 		event.stopPropagation();
 		this.set_record();
+		this._dragend({
+			x: this.axis.x,
+			y: this.axis.y,
+		});
 	},
 	set_record: function(){
 		this.axis_bf.x = this.axis.x
 		this.axis_bf.y = this.axis.y
 	},
-	resize: function(){
+	resizestart: function(){
 
+	},
+	resizing: function(){
+		console.log(arguments)
 	},
 	resizeend: function(){
 
