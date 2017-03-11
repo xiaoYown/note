@@ -32,7 +32,6 @@ XyDragmove.prototype = {
 		if( !!this.el ) return;
 
 		this.el 	= el;
-		this.axis_bf 	= axis;
 
 		/* 回调绑定 */
 		this._dragstart 	= dragstart;
@@ -42,9 +41,9 @@ XyDragmove.prototype = {
 		this._rotating 		= rotating;
 		this._rotateend 	= rotateend;
 		/* 数据初始化 */
-		this.dataInit();
+		this.data_init();
 		/* 视图绑定 */
-		this.bindView();
+		this.bind_view();
 		/* 事件绑定 */
 		this.bind_move();
 		if( isResize )
@@ -53,41 +52,51 @@ XyDragmove.prototype = {
 			this.bind_rotate();
 		return this;
 	},
-	dataInit(){
+	data_init(){
 		this.el_resizes = []; 		// resizes元素
 		this.el_rotate = null;		// rotate元素
-		this.mouse = {
-			x: 0,
-			y: 0,
-		};
-		this.axis_bf = {
-			x: 0,
-			y: 0,
-		};
-		this.axis = {
-			// x: 0,
-			// y: 0,
-		};
-		this.size ={
-			w: 0,
-			h: 0,
-		};
+		this.mouse = {};
+		this.axis_bf = {};
+		this.axis = {};
+		this.size ={};
 		this.deg = 0;
 	},
-	bindView(){
+	show(bool){
+		this.is_show = bool;
+		if( bool ){
+			this.is_show 
+			this.el.style.display = 'block';
+		} else {
+
+			this.el.style.display = 'none';
+		}
+	},
+	bind_view(){
 		let _this = this;
-		defineProperty( this.axis, 'x', this.axis_bf.x , function(newVal, oldVal){
+		defineProperty( this.axis, 'x', 0 , function(newVal, oldVal){
 			_this.el.style.left = newVal + 'px';
 		} );
-		defineProperty( this.axis, 'y', this.axis_bf.y, function(newVal, oldVal){
+		defineProperty( this.axis, 'y', 0, function(newVal, oldVal){
 			_this.el.style.top  = newVal + 'px';
+		} );
+		defineProperty( this.size, 'w', 0 , function(newVal, oldVal){
+			_this.el.style.width = newVal + 'px';
+		} );
+		defineProperty( this.size, 'h', 0, function(newVal, oldVal){
+			_this.el.style.height  = newVal + 'px';
+		} );
+		defineProperty( this, 'is_show', false, function(newVal, oldVal){
+			if( newVal ){
+				_this.el.style.display = 'block';
+			} else {
+				_this.el.style.display = 'none';
+			}
 		} );
 	},
 	bind_move: function(){
 		this.el.addEventListener('dragstart', this.dragstart.bind(this), false);
 		this.el.addEventListener('drag', this.dragmove.bind(this), false);
 		this.el.addEventListener('dragend', this.dragend.bind(this), false);
-		
 	},
 	bind_rezie: function(){
 		if( this.resizes.length > 0 ) return;
@@ -115,22 +124,37 @@ XyDragmove.prototype = {
 	bind_rotate: function(){
 		
 	},
+	set_coord(coord){
+		this.axis.x = coord.x;
+		this.axis.y = coord.y;
+		this.size.w = coord.w;
+		this.size.h = coord.h;
+		this.set_record();
+	},
 	dragstart: function(event){
+		event.stopPropagation();
 		event.dataTransfer.setDragImage(shadow, 0,  0);
 		this.mouse.x = event.clientX;
 		this.mouse.y = event.clientY;
 	},
 	dragmove(event){
+		event.stopPropagation();
 		if( event.clientX == 0 && event.clientY == 0 ) return;
 		this.axis.x = this.axis_bf.x + event.clientX - this.mouse.x;
 		this.axis.y = this.axis_bf.y + event.clientY - this.mouse.y;
 	},
-	dragend: function(){
-		console.log('---')
+	dragend: function(event){
+		event.stopPropagation();
+		this.set_record();
+	},
+	set_record: function(){
 		this.axis_bf.x = this.axis.x
 		this.axis_bf.y = this.axis.y
 	},
 	resize: function(){
+
+	},
+	resizeend: function(){
 
 	},
 	destroy: function(){

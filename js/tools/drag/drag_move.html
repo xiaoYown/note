@@ -6,12 +6,14 @@
 	<style type="text/css">
 		
 		.xy-drag-container{
+			display: none;
 			position: absolute;
 			top: 0;
 			left: 0;
 			border: 1px solid #999;
 			width: 100px;
 			height: 100px;
+			box-sizing: border-box;
 		}
 		.xy-drag-container-resize{
 			position: absolute;
@@ -59,11 +61,19 @@
 			bottom: -5px;
 			right: -5px;
 		}
+		.box{
+			display: inline-block;
+			vertical-align: top;
+			width: 300px;
+			height: 300px;
+			background-color: #56aaff;
+			margin: 10px;
+		}
 	</style>
 </head>
 <body>
 	<div class="shadow"></div>
-	<div class="xy-drag-container" draggable="true">
+	<div class="xy-drag-container hide" draggable="true">
 		<span class="xy-drag-container-resize xy-resize-top-left"></span>
 		<span class="xy-drag-container-resize xy-resize-top-center"></span>
 		<span class="xy-drag-container-resize xy-resize-top-right"></span>
@@ -73,6 +83,16 @@
 		<span class="xy-drag-container-resize xy-resize-bottom-center"></span>
 		<span class="xy-drag-container-resize xy-resize-bottom-right"></span>
 	</div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
+	<div class="box"></div>
 </body>
 </html>
 <script type="text/javascript" src="./drag_move.js"></script>
@@ -81,62 +101,25 @@
 	var wrap = document.querySelector('.xy-drag-container'),
 		shadow = document.querySelector('.shadow');
 
-	// var axis = {
-	// 		x: 0,
-	// 		y: 0,
-	// 	},
-	// 	mouse = {
-	// 		x: 0,
-	// 		y: 0,
-	// 	};
-
-	// function setPosition( el, axis ){
-	// 	el.style.left = axis.x + 'px';
-	// 	el.style.top  = axis.y + 'px';
-	// }
-
-	// function dragstart(event){
-	// 	// 拖拽阴影去除
-	// 	event.dataTransfer.setDragImage(shadow, 0,  0);
-	// 	// event.dataTransfer.effectAllowed = 'move'
-	// 	console.log(event.dataTransfer)
-	// 	mouse.x = event.clientX;
-	// 	mouse.y = event.clientY;
-	// }
-
-	// function dragging(event){
-	// 	if( event.clientX == 0 && event.clientY == 0 ) return;
-	// 	let _x = event.clientX - mouse.x + axis.x,
-	// 		_y = event.clientY - mouse.y + axis.y;
-
-	// 	setPosition( wrap, { x:  _x, y: _y} );
-	// 	document.body.style.cursor = "pointer"
-	// }
-
-	// function dragend(event){
-	// 	let x = event.clientX - mouse.x + axis.x,
-	// 		y = event.clientY - mouse.y + axis.y;
-
-	// 	axis = { x, y };
-
-	// 	setPosition( wrap, axis );
-	// }
-	// setPosition( wrap, axis );
-	// wrap.addEventListener('dragstart', dragstart, false);
-	// wrap.addEventListener('drag', dragging, false);
-	// wrap.addEventListener('dragend', dragend, false);
-	// document.addEventListener('dragover', function(event){ 
-	// 	event.preventDefault();
-	// 	event.target.style.cursor = 'pointer';
-	// 	return false 
-	// }, false);
-
-
-	XyDragmove({
-		el: wrap,
-		axis: {
-			x: 0,
-			y: 0,
-		}
+	var newDrag = XyDragmove({
+		el: wrap
 	});
+	var boxs = document.querySelectorAll('.box');
+	for(var i = 0, len = boxs.length; i < len; i++ ){
+		boxs[i].addEventListener('click', function(event){
+
+			event.stopPropagation();
+			let coord = {
+				x: event.target.offsetLeft,
+				y: event.target.offsetTop,
+				w: event.target.clientWidth,
+				h: event.target.clientHeight,
+			};
+			console.log(coord)
+			newDrag.set_coord(coord);
+			if( !newDrag.is_show ){
+				newDrag.is_show = true; // 开启可见
+			}
+		}, false);
+	}
 </script>
