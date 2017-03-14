@@ -115,9 +115,17 @@
 <script type="text/javascript" src="./drag_move.js"></script>
 <script type="text/javascript">
 	'use strict';
+	function setCoord(el, coord){
+		el.style.left 		= coord.x + 'px';
+		el.style.top  		= coord.y + 'px';
+		el.style.width 		= coord.w + 'px';
+		el.style.height  	= coord.h + 'px';
+		el.style.transform  = 'rotate(' + coord.deg + 'deg)';
+	}
 	var wrap = document.querySelector('.xy-drag-container'),
 		shadow = document.querySelector('.shadow'),
-		box = null;
+		box = null,
+		key = '';
 
 	var newDrag = XyDragmove({
 		el: wrap,
@@ -131,36 +139,53 @@
 			maxH: 400,
 		},
 		dragmove: function(axis){
-			box.style.left = axis.x + 'px';
-			box.style.top  = axis.y + 'px';
+			let _coord = items[key].coord;
+			_coord.x = axis.x;
+			_coord.y = axis.y;
+			setCoord(items[key].el, _coord);
 		},
 		dragend: function(axis){
 			// console.log(axis)
 		},
 		resizing: function(coord){
-			box.style.left 		= coord.x + 'px';
-			box.style.top  		= coord.y + 'px';
-			box.style.width 	= coord.w + 'px';
-			box.style.height  	= coord.h + 'px';
+			let _coord = items[key].coord;
+			_coord.x = coord.x;
+			_coord.y = coord.y;
+			_coord.w = coord.w;
+			_coord.h = coord.h;
+			setCoord(items[key].el, _coord);
 		},
 		rotating: function(deg){
-			box.style.transform = 'rotate(' + deg + 'deg)';
+			console.log(deg)
+			let _coord = items[key].coord;
+			_coord.deg = deg;
+			setCoord(items[key].el, _coord);
 		}
 	});
 
-	var boxs = document.querySelectorAll('.box');
+	var boxs = document.querySelectorAll('.box'),
+		items = {};
 	for(var i = 0, len = boxs.length; i < len; i++ ){
+		
+		let _key = i + '';
+		items[_key] = {
+			el: boxs[i],
+			coord: {
+				x: boxs[i].offsetLeft,
+				y: boxs[i].offsetTop,
+				w: boxs[i].clientWidth,
+				h: boxs[i].clientHeight,
+				deg: parseInt(getComputedStyle(boxs[i]).transform.replace(/[^\d]+/, '') || '0')
+			}
+		};
+
+		boxs[i].setAttribute('data-key', _key);
+
 		boxs[i].addEventListener('click', function(event){
 			box = this;
-			console.log(getComputedStyle(event.target).transform)
+			key = this.getAttribute('data-key');
 			event.stopPropagation();
-			let coord = {
-				x: event.target.offsetLeft,
-				y: event.target.offsetTop,
-				w: event.target.clientWidth,
-				h: event.target.clientHeight,
-				deg: parseInt(getComputedStyle(event.target).transform.replace(/[^\d]+/, '') || '0')
-			};
+			let coord = items[key].coord;
 			newDrag.set_coord(coord);
 
 			if( !newDrag.is_show ){

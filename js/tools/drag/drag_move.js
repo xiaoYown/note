@@ -202,7 +202,7 @@ XyDragmove.prototype = {
 
 		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
 
-		this.deg = deg < 0 ? deg + 360 : deg;
+		this.deg = deg < 0 ? deg + 360 : deg > 360 ? deg - 360 : deg;
 
 		this._rotating(this.deg);
 	},
@@ -217,6 +217,7 @@ XyDragmove.prototype = {
 		this.center = center;
 	},
 	set_coord(coord){
+		console.log(coord.deg)
 		this.axis.x = coord.x;
 		this.axis.y = coord.y;
 		this.size.w = coord.w;
@@ -229,6 +230,7 @@ XyDragmove.prototype = {
 		this.axis_bf.y = this.axis.y;
 		this.size_bf.w = this.size.w;
 		this.size_bf.h = this.size.h;
+		this.deg_bf    = this.deg;
 	},
 	dragstart: function(event){
 		event.stopPropagation();
