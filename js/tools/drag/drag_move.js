@@ -328,6 +328,30 @@ XyDragmove.prototype = {
 				break;
 			case 3:
 				size.w = this.size_bf.w + distance.x;
+				if( this.deg > 0 && this.deg < 180 ){
+					let deg_b  = Math.atan(this.size_bf.h/this.size_bf.w),
+						deg_b_ = Math.atan(this.size.h/this.size.w),
+						deg_c  = deg_b  + this.deg_bf*180/Math.PI,
+						deg_c_ = deg_b_ + this.deg_bf*180/Math.PI,
+						z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4),
+						_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+
+					let coord = {
+							x: this.axis_bf.x + this.size_bf.w/2 - z*Math.cos(deg_c),
+							y: this.axis_bf.y + this.size_bf.h/2- z*Math.sin(deg_c),
+						},
+						_coord = {
+							x: this.axis.x + this.size.w/2 - _z*Math.cos(deg_c_),
+							y: this.axis.y + this.size.h/2 - _z*Math.sin(deg_c_),
+						};
+
+					let d = {
+							x: coord.x - _coord.x,
+							y: coord.y - _coord.y,
+						};
+					// axis.x = this.axis.x + d.x;
+					axis.y = this.axis.y + d.y;
+				}
 				break;
 			case 4:
 				size.h = this.size_bf.h + distance.y;
@@ -373,7 +397,6 @@ XyDragmove.prototype = {
 			this.axis.y = axis.y;
 			this.size.h = size.h;
 		}
-
 		this._resizing({
 			x: this.axis.x,
 			y: this.axis.y,
