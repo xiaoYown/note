@@ -15,6 +15,10 @@ function defineProperty(obj, key, value, set){
 		}
 	});
 }
+function reTain(num, n){
+
+	return Math.floor(num*Math.pow(10, n))/Math.pow(10, n)
+}
 var XyDragmove = function(option){
 	return new XyDragmove.prototype.init(option);
 }
@@ -185,7 +189,19 @@ XyDragmove.prototype = {
 		event.dataTransfer.setDragImage(shadow, 0,  0);
 		this.get_center();
 
-		this.deg_op = Math.atan( (event.clientX - this.center.x) / (this.center.y - event.clientY) )*180 / Math.PI;
+		let l_a = event.clientY - this.center.y,
+			l_b = event.clientX - this.center.x;
+
+		if( l_a < 0 && l_b >= 0 ){
+			this.deg_op = Math.atan( l_b / -l_a )*180 / Math.PI;
+		} else if( l_a >= 0 && l_b > 0 ){
+			this.deg_op = Math.atan( l_a / l_b )*180 / Math.PI + 90;
+		} else if(  l_a > 0 && l_b <= 0 ){
+			this.deg_op = 270 - Math.atan( l_a / -l_b )*180 / Math.PI;
+		} else if(  l_a <= 0 && l_b < 0 ){
+			this.deg_op = Math.atan( -l_a / -l_b )*180 / Math.PI + 270;
+		}
+
 	},
 	rotating: function(event){
 		event.stopPropagation();
@@ -202,7 +218,7 @@ XyDragmove.prototype = {
 
 		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
 
-		this.deg = deg < 0 ? deg + 360 : deg > 360 ? deg - 360 : deg;
+		this.deg = deg < 0 ? deg + 360 : deg >= 360 ? deg - 360 : deg;
 
 		this._rotating(this.deg);
 	},
@@ -217,7 +233,6 @@ XyDragmove.prototype = {
 		this.center = center;
 	},
 	set_coord(coord){
-		console.log(coord.deg)
 		this.axis.x = coord.x;
 		this.axis.y = coord.y;
 		this.size.w = coord.w;
@@ -268,10 +283,8 @@ XyDragmove.prototype = {
 	resizing: function(event, index){
 		// 防跳动
 		if( event.clientX == 0 && event.clientY == 0 ) return;
-		let distance = {
-				x: event.clientX - this.mouse.x,
-				y: event.clientY - this.mouse.y,
-			},
+		let 
+			// 未发生改变属性
 			axis = {
 				x: this.axis_bf.x,
 				y: this.axis_bf.y,
@@ -279,7 +292,36 @@ XyDragmove.prototype = {
 			size = {
 				w: this.size_bf.w,
 				h: this.size_bf.h,
+			},
+			// 鼠标移动距离
+			distance = {
+				x: event.clientX - this.mouse.x,
+				y: event.clientY - this.mouse.y,
+			},
+			// w/h 变化值
+			mol = {
+				w: 0,
+				h: 0,
+			},
+			// resize 前旋转角度与等腰三角形夹角
+			deg_c  = 0,
+			// resizing 旋转角度与等腰三角形夹角
+			deg_c_ = 0,
+			// resize 前旋转角度与等腰三角 腰 l
+			z  = 0,
+			// resizing 旋转角度与等腰三角 腰 l
+			z_ = 0
+			// 发生旋转时稳定点坐标
+			coord = {
+				x: 0,
+				y: 0,
+			},
+			// 发生旋转时不稳定点坐标
+			_coord = {
+				x: 0,
+				y: 0,
 			};
+
 		switch (index) {
 			case 0:
 				size = {
@@ -310,6 +352,41 @@ XyDragmove.prototype = {
 			case 1:
 				axis.y = this.axis_bf.y + distance.y;
 				size.h = this.size_bf.h - distance.y;
+
+				if( this.deg >= 0 && this.deg < 90 ){
+					mol.h = - distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 90 && this.deg < 180 ){
+					mol.h = distance.y/Math.sin((this.deg - 90)*Math.PI/180);
+				} else if( this.deg >= 180 && this.deg < 270 ){
+					mol.h = distance.y/Math.cos((this.deg - 180)*Math.PI/180);
+				} else if( this.deg >= 270 && this.deg < 360 ){
+					mol.h = - distance.y/Math.cos((this.deg - 270)*Math.PI/180)
+				}
+				// size.h = this.size_bf.w + mol.h;
+
+				// if( this.deg != 0 ){
+				// 	let deg_b  = Math.atan(this.size_bf.h/this.size_bf.w),
+				// 		deg_b_ = Math.atan(this.size.h/this.size.w),
+				// 		deg_c  = deg_b  + this.deg_bf*Math.PI/180,
+				// 		deg_c_ = deg_b_ + this.deg_bf*Math.PI/180,
+				// 		z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4),
+				// 		_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+
+				// 	let coord = {
+				// 			x: this.axis_bf.x + this.size_bf.w/2 - z*Math.cos(deg_c),
+				// 			y: this.axis_bf.y + this.size_bf.h/2 - z*Math.sin(deg_c),
+				// 		},
+				// 		_coord = {
+				// 			x: this.axis.x + this.size.w/2 - _z*Math.cos(deg_c_),
+				// 			y: this.axis.y + this.size.h/2 - _z*Math.sin(deg_c_),
+				// 		};
+				// 	let d = {
+				// 			x: coord.x - _coord.x,
+				// 			y: coord.y - _coord.y,
+				// 		};
+				// 	axis.x = this.axis.x + d.x;
+				// 	axis.y = this.axis.y + d.y;
+				// }
 				break;
 			case 2:
 				size = {
@@ -327,29 +404,37 @@ XyDragmove.prototype = {
 				}
 				break;
 			case 3:
-				size.w = this.size_bf.w + distance.x;
-				if( this.deg > 0 && this.deg < 180 ){
-					let deg_b  = Math.atan(this.size_bf.h/this.size_bf.w),
-						deg_b_ = Math.atan(this.size.h/this.size.w),
-						deg_c  = deg_b  + this.deg_bf*180/Math.PI,
-						deg_c_ = deg_b_ + this.deg_bf*180/Math.PI,
-						z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4),
-						_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+				if( this.deg >= 0 && this.deg < 90 ){
+					mol.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				} else if( this.deg >= 90 && this.deg < 180 ){
+					mol.w = - distance.x/Math.sin((this.deg - 90)*Math.PI/180);
+				} else if( this.deg >= 180 && this.deg < 270 ){
+					mol.w = - distance.x/Math.cos((this.deg - 180)*Math.PI/180);
+				} else if( this.deg >= 270 && this.deg < 360 ){
+					mol.w = distance.x/Math.sin((this.deg - 270)*Math.PI/180)
+				}
 
-					let coord = {
+				size.w = this.size_bf.w + mol.w;
+
+				if( this.deg != 0 ){
+					deg_c  = Math.atan(this.size_bf.h/this.size_bf.w)  + this.deg_bf*Math.PI/180;
+					deg_c_ = Math.atan(this.size.h/this.size.w) + this.deg_bf*Math.PI/180;
+					z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4),
+					_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+
+					coord = {
 							x: this.axis_bf.x + this.size_bf.w/2 - z*Math.cos(deg_c),
-							y: this.axis_bf.y + this.size_bf.h/2- z*Math.sin(deg_c),
+							y: this.axis_bf.y + this.size_bf.h/2 - z*Math.sin(deg_c),
 						},
 						_coord = {
 							x: this.axis.x + this.size.w/2 - _z*Math.cos(deg_c_),
 							y: this.axis.y + this.size.h/2 - _z*Math.sin(deg_c_),
 						};
-
-					let d = {
+					d = {
 							x: coord.x - _coord.x,
 							y: coord.y - _coord.y,
 						};
-					// axis.x = this.axis.x + d.x;
+					axis.x = this.axis.x + d.x;
 					axis.y = this.axis.y + d.y;
 				}
 				break;
@@ -390,12 +475,12 @@ XyDragmove.prototype = {
 				break;
 		}
 		if( size.w >= this.limitSize.minW && ( !this.limitSize.maxW || size.w <= this.limitSize.maxW) ){
-			this.axis.x = axis.x;
-			this.size.w = size.w;
+			this.axis.x = reTain(axis.x, 2);
+			this.size.w = reTain(size.w, 2);
 		}
 		if( size.h >= this.limitSize.minH && ( !this.limitSize.maxH || size.h <= this.limitSize.maxH) ){
-			this.axis.y = axis.y;
-			this.size.h = size.h;
+			this.axis.y = reTain(axis.y, 2);
+			this.size.h = reTain(size.h, 2);
 		}
 		this._resizing({
 			x: this.axis.x,
