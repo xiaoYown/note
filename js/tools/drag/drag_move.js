@@ -179,10 +179,6 @@ XyDragmove.prototype = {
 		this.el_rotate.addEventListener('drag', this.rotating.bind(this), false);
 		this.el_rotate.addEventListener('dragend', this.rotateend.bind(this), false);
 
-		let rotate_param = {
-			c: parseInt(getComputedStyle(rotate).top.replace(/[^\d^\.]+/, ''), 10) - parseInt(getComputedStyle(rotate).width)/2
-		};
-		this.rotate_param = rotate_param;
 	},
 	rotatestart: function(event){
 		event.stopPropagation();
@@ -219,8 +215,8 @@ XyDragmove.prototype = {
 		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
 
 		this.deg = deg < 0 ? deg + 360 : deg >= 360 ? deg - 360 : deg;
-
 		this._rotating(this.deg);
+		console.log(this.deg)
 	},
 	rotateend(){
 		this.deg_bf = this.deg;
@@ -299,9 +295,14 @@ XyDragmove.prototype = {
 				y: event.clientY - this.mouse.y,
 			},
 			// w/h 变化值
-			mol = {
+			mol_size = {
 				w: 0,
 				h: 0,
+			},
+			// x/y 变化值
+			mol_axis = {
+				x: 0,
+				y: 0,
 			},
 			// resize 前旋转角度与等腰三角形夹角
 			deg_c  = 0,
@@ -311,6 +312,8 @@ XyDragmove.prototype = {
 			z  = 0,
 			// resizing 旋转角度与等腰三角 腰 l
 			z_ = 0
+			// x/y 比较后以位移较大的为计算标准
+			d = {},
 			// 发生旋转时稳定点坐标
 			coord = {
 				x: 0,
@@ -348,45 +351,89 @@ XyDragmove.prototype = {
 						y: this.axis_bf.y + distance.y,
 					};
 				}
+
+				if( this.deg >= 0 && this.deg < 45 ){
+					mol_size.w = - distance.x/Math.cos(this.deg*Math.PI/180);
+					mol_size.h = - distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 45 && this.deg < 90 ){
+					mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
+					mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
+				} else if( this.deg >= 90 && this.deg < 135 ){
+					mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
+					mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
+				}
+				// if( this.deg >= 315 && this.deg < 360 ){
+
+				// } else if(this.deg >= 0 && this.deg < 45){
+				// 	mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
+				// 	mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
+				// } else if( this.deg >= 45 && this.deg < 135 ){
+				// 	mol_size.w = distance.x/Math.cos((this.deg - 90)*Math.PI/180);
+				// 	mol_size.h = distance.x/Math.sin((this.deg - 90)*Math.PI/180);
+				// } else if( this.deg >= 135 && this.deg < 225 ){
+				// 	mol_size.h = distance.y/Math.cos((this.deg - 180)*Math.PI/180);
+				// } else if( this.deg >= 225 && this.deg < 315 ){
+				// 	mol_size.h = - distance.y/Math.sin((this.deg - 270)*Math.PI/180)
+				// }
+				// size.h = this.size_bf.h + mol_size.h;
+
+				// if( this.deg != 0 ){
+				// 	deg_c  = Math.atan(this.size_bf.h/this.size_bf.w)  + this.deg_bf*Math.PI/180;
+				// 	deg_c_ = Math.atan(this.size.h/this.size.w) + this.deg_bf*Math.PI/180;
+				// 	z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4);
+				// 	_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+
+				// 	coord = {
+				// 		x: this.axis_bf.x + this.size_bf.w/2 + z*Math.cos(deg_c),
+				// 		y: this.axis_bf.y + this.size_bf.h/2 + z*Math.sin(deg_c),
+				// 	},
+				// 	_coord = {
+				// 		x: this.axis.x + this.size.w/2 + _z*Math.cos(deg_c_),
+				// 		y: this.axis.y + this.size.h/2 + _z*Math.sin(deg_c_),
+				// 	};
+				// 	mol_axis = {
+				// 		x: coord.x - _coord.x,
+				// 		y: coord.y - _coord.y,
+				// 	};
+				// 	axis.x = this.axis.x + mol_axis.x;
+				// 	axis.y = this.axis.y + mol_axis.y;
+				// }
 				break;
 			case 1:
 				axis.y = this.axis_bf.y + distance.y;
-				size.h = this.size_bf.h - distance.y;
 
 				if( this.deg >= 0 && this.deg < 90 ){
-					mol.h = - distance.y/Math.sin(this.deg*Math.PI/180);
+					mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
 				} else if( this.deg >= 90 && this.deg < 180 ){
-					mol.h = distance.y/Math.sin((this.deg - 90)*Math.PI/180);
+					mol_size.h = distance.y/Math.sin((this.deg - 90)*Math.PI/180);
 				} else if( this.deg >= 180 && this.deg < 270 ){
-					mol.h = distance.y/Math.cos((this.deg - 180)*Math.PI/180);
+					mol_size.h = distance.y/Math.cos((this.deg - 180)*Math.PI/180);
 				} else if( this.deg >= 270 && this.deg < 360 ){
-					mol.h = - distance.y/Math.cos((this.deg - 270)*Math.PI/180)
+					mol_size.h = - distance.y/Math.sin((this.deg - 270)*Math.PI/180)
 				}
-				// size.h = this.size_bf.w + mol.h;
+				size.h = this.size_bf.h + mol_size.h;
 
-				// if( this.deg != 0 ){
-				// 	let deg_b  = Math.atan(this.size_bf.h/this.size_bf.w),
-				// 		deg_b_ = Math.atan(this.size.h/this.size.w),
-				// 		deg_c  = deg_b  + this.deg_bf*Math.PI/180,
-				// 		deg_c_ = deg_b_ + this.deg_bf*Math.PI/180,
-				// 		z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4),
-				// 		_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
+				if( this.deg != 0 ){
+					deg_c  = Math.atan(this.size_bf.h/this.size_bf.w)  + this.deg_bf*Math.PI/180;
+					deg_c_ = Math.atan(this.size.h/this.size.w) + this.deg_bf*Math.PI/180;
+					z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4);
+					_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
 
-				// 	let coord = {
-				// 			x: this.axis_bf.x + this.size_bf.w/2 - z*Math.cos(deg_c),
-				// 			y: this.axis_bf.y + this.size_bf.h/2 - z*Math.sin(deg_c),
-				// 		},
-				// 		_coord = {
-				// 			x: this.axis.x + this.size.w/2 - _z*Math.cos(deg_c_),
-				// 			y: this.axis.y + this.size.h/2 - _z*Math.sin(deg_c_),
-				// 		};
-				// 	let d = {
-				// 			x: coord.x - _coord.x,
-				// 			y: coord.y - _coord.y,
-				// 		};
-				// 	axis.x = this.axis.x + d.x;
-				// 	axis.y = this.axis.y + d.y;
-				// }
+					coord = {
+						x: this.axis_bf.x + this.size_bf.w/2 + z*Math.cos(deg_c),
+						y: this.axis_bf.y + this.size_bf.h/2 + z*Math.sin(deg_c),
+					},
+					_coord = {
+						x: this.axis.x + this.size.w/2 + _z*Math.cos(deg_c_),
+						y: this.axis.y + this.size.h/2 + _z*Math.sin(deg_c_),
+					};
+					mol_axis = {
+						x: coord.x - _coord.x,
+						y: coord.y - _coord.y,
+					};
+					axis.x = this.axis.x + mol_axis.x;
+					axis.y = this.axis.y + mol_axis.y;
+				}
 				break;
 			case 2:
 				size = {
@@ -404,17 +451,25 @@ XyDragmove.prototype = {
 				}
 				break;
 			case 3:
-				if( this.deg >= 0 && this.deg < 90 ){
-					mol.w = distance.x/Math.cos(this.deg*Math.PI/180);
-				} else if( this.deg >= 90 && this.deg < 180 ){
-					mol.w = - distance.x/Math.sin((this.deg - 90)*Math.PI/180);
-				} else if( this.deg >= 180 && this.deg < 270 ){
-					mol.w = - distance.x/Math.cos((this.deg - 180)*Math.PI/180);
-				} else if( this.deg >= 270 && this.deg < 360 ){
-					mol.w = distance.x/Math.sin((this.deg - 270)*Math.PI/180)
+				if( this.deg >= 0 && this.deg < 45 ){
+					mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				} else if( this.deg >= 45 && this.deg < 90){
+					mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 90 && this.deg < 135 ){
+					mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 135 && this.deg < 180  ){
+					mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				} else if( this.deg >= 180 && this.deg < 225 ){
+					mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				} else if( this.deg >= 225 && this.deg < 270 ){
+					mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 270 && this.deg < 315 ){
+					mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				} else if( this.deg >= 315 && this.deg < 360 ){
+					mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
 				}
 
-				size.w = this.size_bf.w + mol.w;
+				size.w = this.size_bf.w + mol_size.w;
 
 				if( this.deg != 0 ){
 					deg_c  = Math.atan(this.size_bf.h/this.size_bf.w)  + this.deg_bf*Math.PI/180;
@@ -430,12 +485,12 @@ XyDragmove.prototype = {
 							x: this.axis.x + this.size.w/2 - _z*Math.cos(deg_c_),
 							y: this.axis.y + this.size.h/2 - _z*Math.sin(deg_c_),
 						};
-					d = {
-							x: coord.x - _coord.x,
-							y: coord.y - _coord.y,
-						};
-					axis.x = this.axis.x + d.x;
-					axis.y = this.axis.y + d.y;
+					mol_axis = {
+						x: coord.x - _coord.x,
+						y: coord.y - _coord.y,
+					};
+					axis.x = this.axis.x + mol_axis.x;
+					axis.y = this.axis.y + mol_axis.y;
 				}
 				break;
 			case 4:
