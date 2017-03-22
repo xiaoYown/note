@@ -182,11 +182,14 @@ XyDragmove.prototype = {
 	},
 	rotatestart: function(event){
 		event.stopPropagation();
-		event.dataTransfer.setDragImage(shadow, 0,  0);
+		if( event.dataTransfer.setDragImage )
+			event.dataTransfer.setDragImage(shadow, 0,  0);
+		if( event.dataTransfer.setData )
+			event.dataTransfer.setData('Text/plain', null);
 		this.get_center();
 
-		let l_a = event.clientY - this.center.y,
-			l_b = event.clientX - this.center.x;
+		let l_a = event.screenY - this.center.y,
+			l_b = event.screenX - this.center.x;
 
 		if( l_a < 0 && l_b >= 0 ){
 			this.deg_op = Math.atan( l_b / -l_a )*180 / Math.PI;
@@ -201,24 +204,24 @@ XyDragmove.prototype = {
 	},
 	rotating: function(event){
 		event.stopPropagation();
-		if( event.clientX == 0 && event.clientY == 0 ) return;
+		if( event.screenX == 0 && event.screenY == 0 ) return;
 
-		let y_d = this.center.y - event.clientY,
+		let y_d = this.center.y - event.screenY,
 			deg_ed = 0;
 
 		if( y_d < 0 ){
-			deg_ed = 180 - Math.atan( (event.clientX - this.center.x) / ( 0 - y_d ) )*180 / Math.PI;
+			deg_ed = 180 - Math.atan( (event.screenX - this.center.x) / ( 0 - y_d ) )*180 / Math.PI;
 		} else {
-			deg_ed = Math.atan( (event.clientX - this.center.x) / y_d )*180 / Math.PI;
+			deg_ed = Math.atan( (event.screenX - this.center.x) / y_d )*180 / Math.PI;
 		}
 
 		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
 
 		this.deg = deg < 0 ? deg + 360 : deg >= 360 ? deg - 360 : deg;
 		this._rotating(this.deg);
-		console.log(this.deg)
 	},
-	rotateend(){
+	rotateend(event){
+		this.rotating(event);
 		this.deg_bf = this.deg;
 	},
 	get_center(){
@@ -245,25 +248,28 @@ XyDragmove.prototype = {
 	},
 	dragstart: function(event){
 		event.stopPropagation();
-		event.dataTransfer.setDragImage(shadow, 0,  0);
-		this.mouse.x = event.clientX;
-		this.mouse.y = event.clientY;
+		if( event.dataTransfer.setDragImage )
+			event.dataTransfer.setDragImage(shadow, 0,  0);
+		if( event.dataTransfer.setData )
+			event.dataTransfer.setData('Text/plain', null);
+		this.mouse.x = event.screenX;
+		this.mouse.y = event.screenY;
 
 		this._dragstart(this.axis_bf);
 	},
 	dragmove(event){
 		event.stopPropagation();
-		if( event.clientX == 0 && event.clientY == 0 ) return;
+		if( event.screenX == 0 && event.screenY == 0 ) return;
 		let axis = {
-			x: this.axis_bf.x + ( event.clientX - this.mouse.x ),
-			y: this.axis_bf.y + ( event.clientY - this.mouse.y ),
+			x: this.axis_bf.x + ( event.screenX - this.mouse.x ),
+			y: this.axis_bf.y + ( event.screenY - this.mouse.y ),
 		}
 		this.axis.x = axis.x;
 		this.axis.y = axis.y;
 		this._dragmove(axis);
 	},
 	dragend: function(event){
-		event.stopPropagation();
+		this.dragmove(event);
 		this.set_record();
 		this._dragend({
 			x: this.axis.x,
@@ -272,13 +278,17 @@ XyDragmove.prototype = {
 	},
 	resizestart: function(event, i){
 		event.stopPropagation();
-		event.dataTransfer.setDragImage(shadow, 0,  0);
-		this.mouse.x = event.clientX;
-		this.mouse.y = event.clientY;
+		if( event.dataTransfer.setDragImage )
+			event.dataTransfer.setDragImage(shadow, 0,  0);
+		if( event.dataTransfer.setData )
+			event.dataTransfer.setData('Text/plain', null);
+		this.mouse.x = event.screenX;
+		this.mouse.y = event.screenY;
 	},
 	resizing: function(event, index){
+		event.stopPropagation();
 		// 防跳动
-		if( event.clientX == 0 && event.clientY == 0 ) return;
+		if( event.screenX == 0 && event.screenY == 0 ) return;
 		let 
 			// 未发生改变属性
 			axis = {
@@ -291,8 +301,8 @@ XyDragmove.prototype = {
 			},
 			// 鼠标移动距离
 			distance = {
-				x: event.clientX - this.mouse.x,
-				y: event.clientY - this.mouse.y,
+				x: event.screenX - this.mouse.x,
+				y: event.screenY - this.mouse.y,
 			},
 			// w/h 变化值
 			mol_size = {
@@ -325,6 +335,16 @@ XyDragmove.prototype = {
 				y: 0,
 			};
 
+		// if( this.isEqual ){
+		// 	if( index == 0 || index == 2 || index == 5 || index == 7 ){
+		// 		if( Math.abs(distance.x) > Math.abs(distance.y) ){
+		// 			distance.y = distance.y*Math.abs(distance.x)/Math.abs(distance.y);
+		// 		} else {
+		// 			distance.x = distance.x*Math.abs(distance.y)/Math.abs(distance.x)
+		// 		}
+		// 	}
+		// }
+
 		switch (index) {
 			case 0:
 				size = {
@@ -353,27 +373,49 @@ XyDragmove.prototype = {
 				}
 
 				if( this.deg >= 0 && this.deg < 45 ){
-					mol_size.w = - distance.x/Math.cos(this.deg*Math.PI/180);
-					mol_size.h = - distance.y/Math.sin(this.deg*Math.PI/180);
-				} else if( this.deg >= 45 && this.deg < 90 ){
-					mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
-					mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
-				} else if( this.deg >= 90 && this.deg < 135 ){
-					mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
-					mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
+					mol_size.w = - distance.y*Math.cos(this.deg*Math.PI/180);
+					mol_size.h = - distance.y*Math.cos(this.deg*Math.PI/180);
 				}
-				// if( this.deg >= 315 && this.deg < 360 ){
+				size = {
+					w: this.size_bf.w + mol_size.w,
+					h: this.size_bf.h + mol_size.h,
+				};
+				console.log(mol_size.w)
+				if( this.deg != 0 ){
+					deg_c  = Math.atan(this.size_bf.h/this.size_bf.w)  + this.deg_bf*Math.PI/180;
+					deg_c_ = Math.atan(this.size.h/this.size.w) + this.deg_bf*Math.PI/180;
+					z      = Math.sqrt((Math.pow(this.size_bf.h, 2) + Math.pow(this.size_bf.w, 2))/4);
+					_z     = Math.sqrt((Math.pow(this.size.h,    2) + Math.pow(this.size.w,    2))/4);
 
-				// } else if(this.deg >= 0 && this.deg < 45){
-				// 	mol_size.w = - distance.x/Math.sin(this.deg*Math.PI/180);
-				// 	mol_size.h = - distance.y/Math.cos(this.deg*Math.PI/180);
-				// } else if( this.deg >= 45 && this.deg < 135 ){
-				// 	mol_size.w = distance.x/Math.cos((this.deg - 90)*Math.PI/180);
-				// 	mol_size.h = distance.x/Math.sin((this.deg - 90)*Math.PI/180);
-				// } else if( this.deg >= 135 && this.deg < 225 ){
-				// 	mol_size.h = distance.y/Math.cos((this.deg - 180)*Math.PI/180);
-				// } else if( this.deg >= 225 && this.deg < 315 ){
-				// 	mol_size.h = - distance.y/Math.sin((this.deg - 270)*Math.PI/180)
+					coord = {
+						x: this.axis_bf.x + this.size_bf.w/2 + z*Math.cos(deg_c),
+						y: this.axis_bf.y + this.size_bf.h/2 + z*Math.sin(deg_c),
+					},
+					_coord = {
+						x: this.axis.x + this.size.w/2 + _z*Math.cos(deg_c_),
+						y: this.axis.y + this.size.h/2 + _z*Math.sin(deg_c_),
+					};
+					mol_axis = {
+						x: coord.x - _coord.x,
+						y: coord.y - _coord.y,
+					};
+					axis.x = this.axis.x + mol_axis.x;
+					axis.y = this.axis.y + mol_axis.y;
+				}
+				//  else if( this.deg >= 45 && this.deg < 90){
+				// 	mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				// } else if( this.deg >= 90 && this.deg < 135 ){
+				// 	mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				// } else if( this.deg >= 135 && this.deg < 180  ){
+				// 	mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				// } else if( this.deg >= 180 && this.deg < 225 ){
+				// 	mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
+				// } else if( this.deg >= 225 && this.deg < 270 ){
+				// 	mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				// } else if( this.deg >= 270 && this.deg < 315 ){
+				// 	mol_size.w = distance.y/Math.sin(this.deg*Math.PI/180);
+				// } else if( this.deg >= 315 && this.deg < 360 ){
+				// 	mol_size.w = distance.x/Math.cos(this.deg*Math.PI/180);
 				// }
 				// size.h = this.size_bf.h + mol_size.h;
 
@@ -544,8 +586,8 @@ XyDragmove.prototype = {
 			h: this.size.h,
 		});
 	},
-	resizeend: function(event){
-		event.stopPropagation();
+	resizeend: function(event, index){
+		this.resizing(event, index);
 		this.set_record();
 	},
 	destroy: function(){
