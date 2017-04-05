@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+    <head>
+        <meta charset="utf-8">
+        <title><%= title %></title>
+    </head>
+    <body>
+        <div>
+            <h4>id</h4>
+            <input type="text" id="id">
+            <h4>password</h4>
+            <input type="text" id="pwd">
+            <button id="submit">登录</button>
+        </div>
+    </body>
+</html>
+<script src="/static/js/jquery.js"></script>
+<script>
+    var submit = document.getElementById('submit'),
+        idEl   = document.getElementById('id'),
+        pwdEl  = document.getElementById('pwd');
+
+    function register(){
+        var data = {
+            user_id: idEl.value,
+            user_pwd: pwdEl.value,
+        };
+        
+        $.ajax({
+            url: '/login',
+            type: 'POST',
+            dataType: 'JSON',
+            data: data,
+            success: function(res){
+                console.log(res)
+                if( res.code == '000000' ){
+                    window.location.href = '/';
+                }
+            },
+            error: function(status){
+                console.log(status)
+            }
+        });
+    }
+
+    submit.addEventListener('click', register, false);
+</script>

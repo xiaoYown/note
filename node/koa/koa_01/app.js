@@ -72,7 +72,7 @@ app.keys = ['some secret hurr'];
 
 const CONFIG = {
 	key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-	maxAge: 10,//86400000, /** (number) maxAge in ms (default is 1 days) */
+	maxAge: 1000000,//86400000, /** (number) maxAge in ms (default is 1 days) */
 	overwrite: true, /** (boolean) can overwrite or not (default true) */
 	httpOnly: true, /** (boolean) httpOnly or not (default true) */
 	signed: true, /** (boolean) signed or not (default true) */
@@ -89,46 +89,49 @@ app.use(session(CONFIG, app));
 
 let isLogin = function *( next ){
 	if( !this.session.user_id )
-		yield this.render('login', {layout: false, title: '登录'});
+		return this.redirect( '/login' );
 	else
 		yield next;
 }
 
 router
 	.get('/', isLogin , function *( next ) {
-		// var rows = yield db_operate.query('SELECT * FROM AUTHORS WHERE email=511687372 LIMIT 1');
-
-		// console.log(rows)
-
 		yield this.render('index', {layout: false, title: '首页'});
+	})
+	.get('/admin', isLogin , function *( next ) {
+		yield this.render('admin', {layout: false});
+	})
+	.get('/login', function *( next ) {
+		yield this.render('login', {layout: false, title: '登录'});
 	})
 	.post('/login', function *( cxt, next ){
 		let body = this.request.body;
 		if( !!body.user_id && body.user_pwd ){
-			let exists = yield db_operate.query(`SELECT * FROM admin WHERE user_id="${body.user_id}" LIMIT 1`)
-			if( exists[0].user_pwd == body.user_pwd ){
-				
-				this.session.user_id = body.user_id;
+			try{
+				let exists = yield db_operate.query(`SELECT * FROM admin WHERE user_id="${body.user_id}" LIMIT 1`)
+				if( exists[0].user_pwd == body.user_pwd ){
+					
+					this.session.user_id = body.user_id;
 
-				this.body = {
-					code: '000000',
-					success: true,
-					message: '登录成功',
-				};
-			} else {
-				this.body = {
-					code: '000001',
+					this.body = {
+						code: '000000',
+						success: true,
+						message: '登录成功',
+					};
+				} else {
+					this.body = {
+						code: '000001',
+						success: true,
+						message: '密码或账户错误',
+					};
+				}
+			} catch(err) {
+				this.body =  {
+					code: '000002',
 					success: true,
 					message: '密码或账户错误',
 				};
 			}
-			// yield db_operate.query(`INSERT INTO user_info (user_id, user_pwd) VALUES ("${body.user_id}","${body.user_pwd}")`);
-
-			// this.body = {
-			// 	code: '000000',
-			// 	success: true,
-			// 	message: '注册成功',
-			// };
 		} else {
 			this.body = {
 				code: '000001',
