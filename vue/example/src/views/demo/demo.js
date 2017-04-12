@@ -43,6 +43,13 @@ const routes = [
 			user: true,
 		},
 	},
+	{ 	path: '/animation', 	
+		name: 'demo-animation',
+		component: require('./views/animation.vue'),
+		meta: {
+			user: true,
+		},
+	},
 	{
 		path: '/params/:name/:age',
 		name: 'params',

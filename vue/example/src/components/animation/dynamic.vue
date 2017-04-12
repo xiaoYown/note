@@ -37,14 +37,14 @@
         // },
         methods: {
             beforeEnter(){
-                this.$refs.animationBox.className = 'opacity-0 ';
+                // this.$refs.animationBox.className = 'opacity-0 ';
             },
             enter(){
-                this.$refs.animationBox.className += 'opacity-1 ';
+                // this.$refs.animationBox.className += 'opacity-1 ';
                 
                 let _this = this;
                 let name = `bounce-${this.animation}-active`;
-                this.$refs.animationBox.className += name;
+                this.$refs.animationBox.className = name;
                 this.hshow = true;
                 setTimeout(function(){
                     _this.$refs.animationBox.className = '';
@@ -53,7 +53,7 @@
             leave(){
                 let _this = this;
                 let name = `leave-${this.animation}-active`;
-                this.$refs.animationBox.className += name;
+                this.$refs.animationBox.className = name;
                 setTimeout(function(){
                     _this.$refs.animationBox.className = '';
                     _this.hshow = false;
@@ -64,8 +64,6 @@
 </script>
 
 <style lang="sass">
-    .opacity-0{ opacity: 0; transition: opacity 0.5s; }
-    .opacity-1{ opacity: 1; }
 
     .bounce-1-active {animation: bounce-1 .5s; }
     .bounce-2-active {animation: bounce-2 .5s; }
@@ -78,12 +76,14 @@
     @keyframes bounce-1 {
         0% {
             transform: scale(0);
+            opacity: 0;
         }
         50% {
             transform: scale(1.5);
         }
         100% {
             transform: scale(1);
+            opacity: 1;
         }
     }
      @keyframes bounce-2 {
@@ -112,12 +112,14 @@
     @keyframes leave-1 {
         0% {
             transform: scale(1);
+            opacity: 1;
         }
         50% {
             transform: scale(1.5);
         }
         100% {
             transform: scale(0);
+            opacity: 0;
         }
     }
      @keyframes leave-2 {
