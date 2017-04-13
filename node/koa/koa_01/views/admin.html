@@ -3,9 +3,61 @@
     <head>
         <meta charset="utf-8">
         <title>用户管理</title>
+        <link rel="stylesheet" href="/static/css/reset.css">
+        <link rel="stylesheet" href="/static/css/admin.css">
+        <link rel="stylesheet" href="/static/css/editormd.css">
+        <link rel="stylesheet" href="/static/css/codemirror.css">
     </head>
     <body>
-        <div class="admin-sidebar"></div>
+        <div class="admin-content">
+            <div class="admin-sidebar">
+                <ul class="admin-navigate">
+                    <a href="#/blog" class="admin-navigate-item">博客</li>
+                </ul>
+            </div>
+            <ul class="admin-section">
+                <li class="admin-section-item" view-port="/blog">
+                    <a href="#/edit">新增</a>
+                </li>
+
+                <li class="amdin-section-item" view-port="/edit">
+                    <div id="test-editormd"></div>
+                </li>
+            </ul>
+
+        </div>
     </body>
 </html>
 <script src="/static/js/jquery.js"></script>
+<script src="/static/js/editormd.js"></script>
+<script src="/static/js/codemirror.js"></script>
+<script src="/static/js/modes.min.js"></script>
+<script src="/static/js/addons.min.js"></script>
+<script src="/static/js/marked.min.js"></script>
+<script src="/static/js/prettify.min.js"></script>
+
+<script>
+    var editor = null;
+    window.addEventListener('hashchange', function(){
+        var path = location.hash.substring(1);
+        let views = document.querySelectorAll('li[view-port]');
+        for( var i = 0, len = views.length; i < len; i++ ){
+            if( path == views[i].getAttribute('view-port') ){
+                views[i].style.display = 'block';
+            } else {
+                views[i].style.display = 'none';
+            }
+        }
+        if( path == '/edit' ){
+            if( !editor ){
+                editor = editormd("test-editormd", {
+                    width   : "90%",
+                    height  : 640,
+                    syncScrolling : "single",
+                    path    : "../lib/"
+                });
+            }
+        }
+    });
+
+</script>

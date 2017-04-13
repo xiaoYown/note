@@ -1,0 +1,17 @@
+.admin-sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    line-height: 30px;
+    text-align: center;
+    border-right: 1px solid #999;
+}
+
+.admin-section{
+    padding-left: 200px;
+}
+.admin-section-item{
+    display: none;
+}

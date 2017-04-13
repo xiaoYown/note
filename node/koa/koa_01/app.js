@@ -95,7 +95,7 @@ let isLogin = function *( next ){
 }
 
 router
-	.get('/', isLogin , function *( next ) {
+	.get('/', function *( next ) {
 		yield this.render('index', {layout: false, title: '首页'});
 	})
 	.get('/admin', isLogin , function *( next ) {
