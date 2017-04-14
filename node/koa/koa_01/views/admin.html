@@ -21,7 +21,11 @@
                 </li>
 
                 <li class="amdin-section-item" view-port="/edit">
-                    <div id="test-editormd"></div>
+                    <div class="edit-section">
+                        <div id="test-editormd"></div>
+                    </div>
+                    <div class="edit-footer"></div>
+                    <button id="add-post">提交</button>
                 </li>
             </ul>
 
@@ -38,7 +42,8 @@
 
 <script>
     var editor = null;
-    window.addEventListener('hashchange', function(){
+
+    function viewChange(){
         var path = location.hash.substring(1);
         let views = document.querySelectorAll('li[view-port]');
         for( var i = 0, len = views.length; i < len; i++ ){
@@ -54,10 +59,14 @@
                     width   : "90%",
                     height  : 640,
                     syncScrolling : "single",
-                    path    : "../lib/"
+                    path    : "../static/js/"
                 });
             }
         }
-    });
+    }
+
+    window.addEventListener('hashchange', viewChange);
+
+    viewChange();
 
 </script>
