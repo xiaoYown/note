@@ -13,6 +13,7 @@ const bodyparser 	= require('koa-bodyparser')();
 const logger 		= require('koa-logger');
 const redisStore 	= require('koa-redis');
 const session 		= require('koa-session');
+const open 			= require("open");
 
 const Router = require('koa-router');
 
@@ -22,11 +23,11 @@ var wrapper = require('co-mysql'),
 	mysql 	= require('mysql'); 
 
 var options = {
-    host : 'localhost',
-    port : 3306 ,
-    database : 'blog_test',
-    user: 'root',
-    password : '511687372'
+	host : 'localhost',
+	port : 3306 ,
+	database : 'blog_test',
+	user: 'root',
+	password : '511687372'
 };
 
 var pool = mysql.createPool(options),
@@ -140,6 +141,86 @@ router
 			};
 		}
 	})
+	.post('/artical/:method', function *( cxt, next ){
+		let body = this.request.body;
+
+		let type = {
+			blog: {
+				name: '博客',
+				child: {
+					web_front_end: {
+						name: 'web前端',
+						child: {
+							framework: {
+								name: '框架',
+							}
+						}
+					}
+				}
+			}
+		};
+		let new_time = new Date().valueOf();
+		let id = `${body.type_NO01}-${body.type_NO02}-${body.type_NO03}-${new_time}`,
+			create_time = new_time.toLocaleString(),
+			type_NO01 = body.type_NO01,
+			type_NO02 = body.type_NO02,
+			type_NO03 = body.type_NO03;
+
+		try {
+			let exists = yield db_operate.query(`SELECT * FROM artical where id = ${id}`)
+		} catch( err ) {
+			console.log(type[type_NO01].name)
+			switch (this.params.method){
+				case 'add':
+					console.log(`INSERT INTO artical (
+							type_NO01,
+							type_NO02,
+							type_NO03,
+							type_name_NO01,
+							type_name_NO02,
+							type_name_NO03,
+							content
+						) 
+						values 
+						(
+							"${type_NO01}",
+							"${type_NO02}",
+							"${type_NO03}",
+							"${type[type_NO01].name}",
+							"${type[type_NO01].child[type_NO02].name}",
+							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
+							"${body.content}"
+						)`)
+					yield db_operate.query(`insert into artical (
+							type_NO01,
+							type_NO02,
+							type_NO03,
+							type_name_NO01,
+							type_name_NO02,
+							type_name_NO03,
+							content
+						) 
+						values 
+						(
+							"${type_NO01}",
+							"${type_NO02}",
+							"${type_NO03}",
+							"${type[type_NO01].name}",
+							"${type[type_NO01].child[type_NO02].name}",
+							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
+							"${body.content}"
+						)`)
+					break;
+			}
+			this.body = {
+				code: '000000',
+				success: true,
+				message: '请求成功'
+			}
+
+		}
+
+	})
 	.post('/register', function *( cxt, next ) {
 		let body = this.request.body;
 		// if( !!body.user_id && body.user_pwd ){
@@ -168,5 +249,7 @@ app.on('error', function(err, ctx){
 });
 
 app.listen(3002);
+
+// open("http://localhost:3002")
 
 module.exports = app;

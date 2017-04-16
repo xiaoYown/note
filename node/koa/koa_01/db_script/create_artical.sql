@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS article (
 	create_time DATETIME, 
 	update_time DATETIME, 
 	id VARCHAR(60),
-	introduction VARCHAR(200)
+	introduction VARCHAR(200),
+	content TEXT(65535)
 )

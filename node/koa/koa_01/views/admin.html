@@ -1,36 +1,53 @@
 <!DOCTYPE html>
 <html lang="zh_CN">
-    <head>
-        <meta charset="utf-8">
-        <title>用户管理</title>
-        <link rel="stylesheet" href="/static/css/reset.css">
-        <link rel="stylesheet" href="/static/css/admin.css">
-        <link rel="stylesheet" href="/static/css/editormd.css">
-        <link rel="stylesheet" href="/static/css/codemirror.css">
-    </head>
-    <body>
-        <div class="admin-content">
-            <div class="admin-sidebar">
-                <ul class="admin-navigate">
-                    <a href="#/blog" class="admin-navigate-item">博客</li>
-                </ul>
-            </div>
-            <ul class="admin-section">
-                <li class="admin-section-item" view-port="/blog">
-                    <a href="#/edit">新增</a>
-                </li>
+	<head>
+		<meta charset="utf-8">
+		<title>用户管理</title>
+		<link rel="stylesheet" href="/static/css/reset.css">
+		<link rel="stylesheet" href="/static/css/admin.css">
+		<link rel="stylesheet" href="/static/css/editormd.css">
+		<link rel="stylesheet" href="/static/css/codemirror.css">
+	</head>
+	<body>
+		<div class="admin-content">
+			<!-- 侧边栏 -->
+			<div class="admin-sidebar">
+				<ul class="admin-navigate">
+					<a href="#/blog" class="admin-navigate-item">博客</li>
+				</ul>
+			</div>
+			<!-- 视口 -->
+			<ul class="admin-section">
+				<li class="admin-section-item" view-port="/blog">
+					<a href="#/edit">新增</a>
+					<ul id=""></ul>
+				</li>
 
-                <li class="amdin-section-item" view-port="/edit">
-                    <div class="edit-section">
-                        <div id="test-editormd"></div>
-                    </div>
-                    <div class="edit-footer"></div>
-                    <button id="add-post">提交</button>
-                </li>
-            </ul>
+				<li class="amdin-section-item" view-port="/edit">
+					<div class="edit-section">
+						<div id="test-editormd"></div>
+					</div>
+					<div class="edit-footer">
+						<select name="" id="type_NO01">
+							<option value="">请选择</option>
+							<option value="blog">博客</option>
+						</select>
+						<select name="" id="type_NO02">
+							<option value="">请选择</option>
+							<option value="web_front_end">前端</option>
+						</select>
+						<select name="" id="type_NO03">
+							<option value="">请选择</option>
+							<option value="framework">框架</option>
+						</select>
+						<button id="add-post">提交</button>
+					</div>
+					<div id="show"></div>
+				</li>
+			</ul>
 
-        </div>
-    </body>
+		</div>
+	</body>
 </html>
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/editormd.js"></script>
@@ -40,33 +57,90 @@
 <script src="/static/js/marked.min.js"></script>
 <script src="/static/js/prettify.min.js"></script>
 
+<script src="/static/js/underscore.min.js"></script>
+<script src="/static/js/raphael.min.js"></script>
+<script src="/static/js/sequence-diagram.min.js"></script>
+<script src="/static/js/flowchart.min.js"></script>
+<script src="/static/js/jquery.flowchart.min.js"></script>
+
 <script>
-    var editor = null;
+	// editor 
+	var editor = null;
+	// viewport change
+	function viewChange(){
+		var path = location.hash.substring(1);
+		let views = document.querySelectorAll('li[view-port]');
+		for( var i = 0, len = views.length; i < len; i++ ){
+			if( path == views[i].getAttribute('view-port') ){
+				views[i].style.display = 'block';
+			} else {
+				views[i].style.display = 'none';
+			}
+		}
+		if( path == '/edit' ){
+			if( !editor ){
+				editor = editormd("test-editormd", {
+					width   : "90%",
+					height  : 640,
+					syncScrolling : "single",
+					path    : "../static/js/"
+				});
+			}
+		}
+	}
 
-    function viewChange(){
-        var path = location.hash.substring(1);
-        let views = document.querySelectorAll('li[view-port]');
-        for( var i = 0, len = views.length; i < len; i++ ){
-            if( path == views[i].getAttribute('view-port') ){
-                views[i].style.display = 'block';
-            } else {
-                views[i].style.display = 'none';
+	window.addEventListener('hashchange', viewChange);
+
+	viewChange();
+
+	// submit aticale
+	function submit(){
+		var type_NO01 = document.getElementById('type_NO01'),
+			type_NO02 = document.getElementById('type_NO02'),
+			type_NO03 = document.getElementById('type_NO03');
+
+		var data = {
+			type_NO01: document.getElementById('type_NO01').value,
+			type_NO02: document.getElementById('type_NO02').value,
+			type_NO03: document.getElementById('type_NO03').value,
+			content:   editor.getMarkdown(),
+		};
+		console.log(data)
+		$.ajax({
+            url: '/artical/add',
+            type: 'POST',
+            dataType: 'JSON',
+            data: data,
+            success: function(res){
+                if( res.code == '000000' ){
+					console.log(res)
+                }
+            },
+            error: function(status){
+                console.log(status)
             }
-        }
-        if( path == '/edit' ){
-            if( !editor ){
-                editor = editormd("test-editormd", {
-                    width   : "90%",
-                    height  : 640,
-                    syncScrolling : "single",
-                    path    : "../static/js/"
-                });
-            }
-        }
-    }
+        });
 
-    window.addEventListener('hashchange', viewChange);
+		// var show = document.getElementById('show');
 
-    viewChange();
+		// editormd.markdownToHTML("show", {
+		// 	markdown        : editor.getMarkdown() ,//+ "\r\n" + $("#append-test").text(),
+		// 	//htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+		// 	htmlDecode      : "style,script,iframe",  // you can filter tags decode
+		// 	//toc             : false,
+		// 	// tocm            : true,    // Using [TOCM]
+		// 	// tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
+		// 	//gfm             : false,
+		// 	//tocDropdown     : true,
+		// 	markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+		// 	// emoji           : true,
+		// 	// taskList        : true,
+		// 	// tex             : true,  // 默认不解析
+		// 	flowChart       : true,  // 默认不解析
+		// 	sequenceDiagram : true  // 默认不解析
+		// });
+
+	}
+	document.getElementById('add-post').addEventListener('click', submit);
 
 </script>
