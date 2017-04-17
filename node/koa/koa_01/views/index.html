@@ -6,40 +6,14 @@
     </head>
     <body>
         <div>
-            <h4>id</h4>
-            <input type="text" id="id">
-            <h4>password</h4>
-            <input type="text" id="pwd">
-            <button id="submit">注册</button>
+            <div class="index-sidebar"></div>
+            <div class="index-content">
+                <% for( var i = 0, len = new_list.length; i < len; i++ ) {%>
+                    <a href="/artical/<%= new_list[i].id  %>"> <%= new_list[i].title %> </a>
+                <% } %>
+            </div>
             <a href="/admin"> 后台系统 </a>
         </div>
     </body>
 </html>
 <script src="/static/js/jquery.js"></script>
-<script>
-    var submit = document.getElementById('submit'),
-        idEl   = document.getElementById('id'),
-        pwdEl  = document.getElementById('pwd');
-
-    function register(){
-        var data = {
-            user_id: idEl.value,
-            user_pwd: pwdEl.value,
-        };
-        
-        $.ajax({
-            url: '/register',
-            type: 'POST',
-            dataType: 'JSON',
-            data: data,
-            success: function(res){
-                console.log(res)
-            },
-            error: function(status){
-                console.log(status)
-            }
-        });
-    }
-
-    submit.addEventListener('click', register, false);
-</script>

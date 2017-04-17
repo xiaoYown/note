@@ -1,4 +1,3 @@
-
 'use strict'
 
 const path 			= require('path');
@@ -97,7 +96,13 @@ let isLogin = function *( next ){
 
 router
 	.get('/', function *( next ) {
-		yield this.render('index', {layout: false, title: '首页'});
+		let new_list = yield db_operate.query(`select title, id from artical`);
+
+		yield this.render('index', {
+			layout: false, 
+			title: '首页', 
+			new_list
+		});
 	})
 	.get('/admin', isLogin , function *( next ) {
 		yield this.render('admin', {layout: false});
@@ -141,6 +146,10 @@ router
 			};
 		}
 	})
+	.get('/artical/:id', function *(){
+		
+		yield this.render('artical', { layout: false });
+	})
 	.post('/artical/:method', function *( cxt, next ){
 		let body = this.request.body;
 
@@ -169,28 +178,20 @@ router
 		try {
 			let exists = yield db_operate.query(`SELECT * FROM artical where id = ${id}`)
 		} catch( err ) {
-			console.log(type[type_NO01].name)
 			switch (this.params.method){
+				case 'get':
+					console.log(`select content from artical where id = "${this.request.body.id}"`)
+					let markdown = yield db_operate.query(`select content from artical where id = "${this.request.body.id}"`);
+					this.body = {
+						code: '000000',
+						success: true,
+						message: '请求成功',
+						data: {
+							content: markdown[0].content
+						}
+					};
+					break;
 				case 'add':
-					console.log(`INSERT INTO artical (
-							type_NO01,
-							type_NO02,
-							type_NO03,
-							type_name_NO01,
-							type_name_NO02,
-							type_name_NO03,
-							content
-						) 
-						values 
-						(
-							"${type_NO01}",
-							"${type_NO02}",
-							"${type_NO03}",
-							"${type[type_NO01].name}",
-							"${type[type_NO01].child[type_NO02].name}",
-							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
-							"${body.content}"
-						)`)
 					yield db_operate.query(`insert into artical (
 							type_NO01,
 							type_NO02,
@@ -198,6 +199,8 @@ router
 							type_name_NO01,
 							type_name_NO02,
 							type_name_NO03,
+							id,
+							title,
 							content
 						) 
 						values 
@@ -208,14 +211,16 @@ router
 							"${type[type_NO01].name}",
 							"${type[type_NO01].child[type_NO02].name}",
 							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
+							"${id}",
+							"${body.title}",
 							"${body.content}"
 						)`)
+					this.body = {
+						code: '000000',
+						success: true,
+						message: '请求成功'
+					}
 					break;
-			}
-			this.body = {
-				code: '000000',
-				success: true,
-				message: '请求成功'
 			}
 
 		}
