@@ -13,17 +13,44 @@
 			<!-- 侧边栏 -->
 			<div class="admin-sidebar">
 				<ul class="admin-navigate">
-					<a href="#/blog" class="admin-navigate-item">博客</li>
+					<li>
+						<a href="#/blog" class="admin-navigate-item">博客</li>
+					</li>
+					<li>
+						<a href="#/journal" class="admin-navigate-item">随记</li>
+					</li>
 				</ul>
 			</div>
 			<!-- 视口 -->
 			<ul class="admin-section">
 				<li class="admin-section-item" view-port="/blog">
-					<a href="#/edit">新增</a>
+					<div class="blog-header">
+						<a href="#/edit">新增</a>
+					</div>
+
+					<div class="blog-section">
+						<!-- <ul id="blog-list"></ul> -->
+						<table class="artical-list-wrap">
+							<thead>
+								<tr>
+									<th>名称</th>
+									<th>分类</th>
+									<th>创建时间</th>
+									<th>更新时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="blog-list"></tbody>
+						</table>
+					</div>
+
+					<ul id=""></ul>
+				</li>
+				<li class="admin-section-item" view-port="/journal">
 					<ul id=""></ul>
 				</li>
 
-				<li class="amdin-section-item" view-port="/edit">
+				<li class="admin-section-item" view-port="/edit">
 					<div class="edit-section">
 						<div id="test-editormd"></div>
 					</div>
@@ -45,6 +72,7 @@
 					</div>
 					<div id="show"></div>
 				</li>
+
 			</ul>
 
 		</div>
@@ -67,18 +95,18 @@
 <script>
 	// editor 
 	var editor = null;
-	// viewport change
-	function viewChange(){
-		var path = location.hash.substring(1);
-		let views = document.querySelectorAll('li[view-port]');
-		for( var i = 0, len = views.length; i < len; i++ ){
-			if( path == views[i].getAttribute('view-port') ){
-				views[i].style.display = 'block';
-			} else {
-				views[i].style.display = 'none';
-			}
+	// router
+	var router = [
+		{
+			path: '/edit',
+			cb: 'edit'
+		},{
+			path: '/blog',
+			cb: 'blog'
 		}
-		if( path == '/edit' ){
+	];
+	var views = {
+		edit: function(){
 			if( !editor ){
 				editor = editormd("test-editormd", {
 					width   : "90%",
@@ -86,6 +114,71 @@
 					syncScrolling : "single",
 					path    : "../static/js/"
 				});
+			}
+
+		},
+		blog: function(){
+			$.ajax({
+				url: '/artical_list/blog',
+	            type: 'GET',
+	            dataType: 'JSON',
+	            data: {},
+	            success: function(res){
+	                if( res.code == '000000' ){
+						console.log(res)
+						var artical_list = res.data;
+						var list = '';
+						for( var i = 0, len = artical_list.length; i < len; i++ ){
+							// list += 
+							// '<li class="artical-list">' +
+							// 	'<a class="artical-list-title" href="' + artical_list[i].id + '">' + artical_list[i].title + '</a>' +
+							// 	'<div class="artical-tips">' +
+							// 		'<span>' + artical_list[i].type_name_NO01 + '</span>' +
+							// 		'<span>' + artical_list[i].type_name_NO02 + '</span>' +
+							// 	'</div>' +
+							// 	'<dl>' +
+							// 		'<dt>时间:' + artical_list[i].create_time + '</dt>' +
+							// 		'<dt>更新:' + artical_list[i].update_time + '</dt>' +
+							// 	'</dl>' +
+							// 	'<dl>' +
+							// 		'<button>编辑</button>' +
+							// 		'<button>删除</button>' +
+							// 	'</dl>' +
+							// 	'<p>' + artical_list[i].introduction + '</p>'
+							// '</li>';
+							list += '<tr>' +
+								'<td>' + artical_list[i].title + '</td>' +
+								'<td>' + artical_list[i].type_name_NO01 + '-' + artical_list[i].type_name_NO02 + '</td>' +
+								'<td>' + artical_list[i].create_time + '</td>' +
+								'<td>' + artical_list[i].update_time + '</td>' +
+								'<td><span>编辑</span><span>删除</span></td>' +
+								'</tr>';
+						}
+						document.getElementById('blog-list').innerHTML = list;
+	                }
+	            },
+	            error: function(status){
+	                console.log(status)
+	            }
+			});
+		}
+	};
+	// viewport change
+	function viewChange(){
+		var path = location.hash.substring(1);
+		let view_ports = document.querySelectorAll('li[view-port]');
+
+		for( var i = 0, len = view_ports.length; i < len; i++ ){
+			if( path == view_ports[i].getAttribute('view-port') ){
+				view_ports[i].style.display = 'block';
+			} else {
+				view_ports[i].style.display = 'none';
+			}
+		}
+		for( var i = 0, len = router.length; i < len; i++ ){
+			if( router[i].path == path ){
+				views[path.substring(1)]();
+				break;
 			}
 		}
 	}

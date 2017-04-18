@@ -10,18 +10,12 @@ module.exports = {
 		assetsPublicPath: './',
 		productionSourceMap: false,
 		chunks: [
-			{
-				node_module: true,
-				name: 'echarts',
-				filename: 'echarts.js',
-				chunks: ['report']
-			},
-			{
-				node_module: true,
-				name: 'vue',
-				filename: 'vue.js',
-				chunks: Infinity
-			},
+			// {
+			// 	node_module: true,
+			// 	name: 'vue',
+			// 	filename: 'vue.js',
+			// 	chunks: Infinity
+			// },
 			{
 				node_module: true,
 				name: 'vendor'

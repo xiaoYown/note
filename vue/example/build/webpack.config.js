@@ -21,7 +21,8 @@ function getEntry(globPath) {
 	return entries;
 }
 var entries = getEntry("./src/views/*/*.js"); // 获得入口js文件
-
+entries.jquery = ['jquery'];
+entries.vue = ['vue'];
 module.exports = {
 	entry: entries,
 	output: {

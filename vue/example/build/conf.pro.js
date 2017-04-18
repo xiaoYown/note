@@ -19,25 +19,51 @@ var plugins =  [
 	}),
 	new webpack.optimize.OccurenceOrderPlugin(),
 	new ExtractTextPlugin(utils.assetsPath('css/[name].css?[chunkhash]')), 	//单独使用style标签加载css并设置其路径
-];
-chunks.forEach(function(item){
-	plugins.push(
-		new webpack.optimize.CommonsChunkPlugin(item)
-	);
-});
-Object.keys(baseWebpack.entry).forEach(function(name){
-	var entryChunks = [ name ];
-	chunks.forEach(function(item){
-		if( item.chunks == Infinity || !item.chunks || item.chunks.indexOf( name ) != -1 ){
-			entryChunks.push( item.name );
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: function(module, count){
+			return 	( 
+				module.resource && 
+				/\.js$/.test(module.resource) && 
+				module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0 &&
+				module.resource.indexOf(path.join(__dirname, '../node_modules/jquery')) !== 0 &&
+				module.resource.indexOf(path.join(__dirname, '../node_modules/vue')) !== 0
+			)
 		}
-	});
+	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vue',
+		chunks: ['vue', 'index', 'components', 'demo']
+	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'jquery',
+		chunks: ['jquery', 'index', 'demo']
+	}),
+];
+// chunks.forEach(function(item){
+// 	plugins.push(
+// 		new webpack.optimize.CommonsChunkPlugin(item)
+// 	);
+// });
+var pages = {
+	index: ['vue', 'index', 'vendor', 'jquery'],
+	demo: ['vue', 'demo', 'vendor', 'jquery'],
+	components: ['vue', 'components', 'vendor'],
+};
+Object.keys(baseWebpack.entry).forEach(function(name){
+	if( name == 'jquery' || name == 'vue' ) return;
+	var entryChunks = [ name ];
+	// chunks.forEach(function(item){
+	// 	if( item.chunks == Infinity || !item.chunks || item.chunks.indexOf( name ) != -1 ){
+	// 		entryChunks.push( item.name );
+	// 	}
+	// });
 	var plugin = new HtmlWebpackPlugin({
 		filename: path.resolve(__dirname, `../dist/${name}.html`),
 		template: path.resolve(__dirname, `../src/pages/${name}.html`),
 		favicon: config.build.favicon,
 		inject: true,
-		chunks: entryChunks, 		// 多文件打包引入
+		chunks: pages[name], 		// 多文件打包引入
 		minify: {
 			removeComments: true,
 			collapseWhitespace: true,

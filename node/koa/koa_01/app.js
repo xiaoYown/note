@@ -150,6 +150,24 @@ router
 		
 		yield this.render('artical', { layout: false });
 	})
+	.get('/artical_list/:type', function *(){
+		try{
+			let artical_list = yield db_operate.query(`SELECT * FROM artical WHERE type_NO01="${this.params.type}"`)
+			this.body = {
+				code: '000000',
+				success: true,
+				message: '查询成功',
+				data: artical_list,
+			}
+		} catch(err) {
+			this.body = {
+				code: '000000',
+				success: true,
+				message: '无此类文章',
+				data: [],
+			}
+		}
+	})
 	.post('/artical/:method', function *( cxt, next ){
 		let body = this.request.body;
 

@@ -14,6 +14,7 @@
 }
 .admin-section-item{
     display: none;
+    padding-left: 30px;
 }
 /* 视口区域 */
 li[view-port="/edit"]{
@@ -26,4 +27,19 @@ li[view-port="/edit"]{
 }
 .edit-footer{
 
+}
+
+/* 文章列表展示 */
+.artical-list-wrap{
+    text-align: center;
+    border-spacing: 0;
+    border-right: 1px solid #000;
+}
+thead th{
+    border-top: 1px solid #000;
+}
+th, td{
+    padding: 10px;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
