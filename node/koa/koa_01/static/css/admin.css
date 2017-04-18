@@ -28,18 +28,35 @@ li[view-port="/edit"]{
 .edit-footer{
 
 }
-
+.blog-section{
+    padding: 30px;
+    min-height: 600px;
+}
 /* 文章列表展示 */
 .artical-list-wrap{
+    width: 90%;
+    margin: 0 auto;
     text-align: center;
     border-spacing: 0;
-    border-right: 1px solid #000;
+    border-right: 1px solid #ccc;
+}
+thead{
+    color: #fff;
+    background-color: #56aaff;
+}
+tbody{
+    color: #999;
 }
 thead th{
-    border-top: 1px solid #000;
+    border-top: 1px solid #ccc;
 }
 th, td{
-    padding: 10px;
-    border-left: 1px solid #000;
-    border-bottom: 1px solid #000;
+    padding: 6px 8px;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+span[blog-put],
+span[blog-del]{
+    margin-right: 6px;
+    cursor: pointer;
 }

@@ -96,7 +96,12 @@ let isLogin = function *( next ){
 
 router
 	.get('/', function *( next ) {
-		let new_list = yield db_operate.query(`select title, id from artical`);
+		let new_list = [];
+		try{
+			let new_list = yield db_operate.query(`select title, id from artical`);
+		} catch(err){
+
+		}
 
 		yield this.render('index', {
 			layout: false, 
@@ -198,6 +203,15 @@ router
 		} catch( err ) {
 			switch (this.params.method){
 				case 'get':
+				console.log(`"${type_NO01}",
+							"${type_NO02}",
+							"${type_NO03}",
+							"${type[type_NO01].name}",
+							"${type[type_NO01].child[type_NO02].name}",
+							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
+							"${id}",
+							"${body.title}",
+							"${body.content}"`)
 					console.log(`select content from artical where id = "${this.request.body.id}"`)
 					let markdown = yield db_operate.query(`select content from artical where id = "${this.request.body.id}"`);
 					this.body = {

@@ -22,6 +22,9 @@ function reTain(num, n){
 var XyDragmove = function(option){
 	return new XyDragmove.prototype.init(option);
 }
+XyDragmove.eventStop = function(event){
+	event.stopPropagation();
+}
 XyDragmove.prototype = {
 	constructor: XyDragmove,
 	
@@ -92,6 +95,12 @@ XyDragmove.prototype = {
 			this.el.style.display = 'none';
 		}
 	},
+	event_stop(el, event){
+		el.addEventListener( event, XyDragmove.eventStop, false );
+	},
+	event_stop_off(el, event){
+		el.removeEventListener( event, XyDragmove.eventStop, false );
+	},
 	bind_view(){
 		let _this = this;
 		defineProperty( this.axis, 'x', 0 , function(newVal, oldVal){
@@ -118,15 +127,127 @@ XyDragmove.prototype = {
 		} );
 	},
 	bind_move: function(){
-		this.el.setAttribute('draggable', true);
-		this.el.addEventListener('dragstart', this.dragstart.bind(this), false);
-		this.el.addEventListener('drag', this.dragmove.bind(this), false);
-		this.el.addEventListener('dragend', this.dragend.bind(this), false);
+		let _this = this;
+		// this.el.setAttribute('draggable', true);
+		// this.el.addEventListener('mousedown', this.dragstart.bind(this), false);
+		this.el.onmousedown = this.dragstart.bind(this);
+		document.addEventListener('mouseout', function(){
+			_this.el.onmousemove = null;
+			_this.el.onmouseup();
+		}, false);
 	},
 	off_move: function(){
-		this.el.removeEventListener('dragstart', this.dragstart.bind(this), false);
-		this.el.removeEventListener('drag', this.dragmove.bind(this), false);
-		this.el.removeEventListener('dragend', this.dragend.bind(this), false);
+		// this.el.removeEventListener('mousedown', this.dragstart.bind(this), false);
+		this.el.onmousedown = null;
+	},
+	dragstart: function(event){
+		console.log('movestart')
+		event.stopPropagation();
+		document.onmousemove = this.dragmove.bind(this);
+		this.el.onmouseup   = this.dragend.bind(this);
+		// document.addEventListener('mousemove', this.dragmove.bind(this), false);
+		// document.addEventListener('mouseup', this.dragend.bind(this), false);
+		// if( event.dataTransfer.setDragImage )
+		// 	event.dataTransfer.setDragImage(shadow, 0,  0);
+		// if( event.dataTransfer.setData )
+		// 	event.dataTransfer.setData('Text/plain', null);
+		this.mouse.x = event.clientX;
+		this.mouse.y = event.clientY;
+
+		this._dragstart(this.axis_bf);
+	},
+	dragmove(event){
+		console.log('moving')
+		// event.stopPropagation();
+		if( event.clientX == 0 && event.clientY == 0 ) return;
+		let axis = {
+			x: this.axis_bf.x + ( event.clientX - this.mouse.x ),
+			y: this.axis_bf.y + ( event.clientY - this.mouse.y ),
+		}
+		this.axis.x = axis.x;
+		this.axis.y = axis.y;
+		this._dragmove(axis);
+	},
+	dragend: function(event){
+		// this.dragmove(event);
+		console.log('moveend')
+		document.onmousemove = null;
+		this.el.onmouseup   = null;
+		// document.removeEventListener('mousemove', this.dragmove.bind(this), false);
+		// document.removeEventListener('mouseup', this.dragend.bind(this), false);
+		this.set_record();
+		this._dragend({
+			x: this.axis.x,
+			y: this.axis.y,
+		});
+	},
+	
+	bind_rotate: function(){
+		let rotate = document.createElement('span');
+		rotate.className = 'xy-rotate';
+		// rotate.setAttribute('draggable', true);
+		this.el_rotate = rotate;
+		this.el.appendChild(rotate);
+
+		this.event_stop( this.el_rotate, 'mousedown' );
+		this.el_rotate.addEventListener('mousedown', this.rotatestart.bind(this), false);
+		// this.el_rotate.addEventListener('drag', this.rotating.bind(this), false);
+		// this.el_rotate.addEventListener('dragend', this.rotateend.bind(this), false);
+	},
+	rotatestart: function(event){
+		document.onmousemove = this.rotating.bind(this);
+		document.onmouseup   = this.rotateend.bind(this);
+		event.stopPropagation();
+		// if( event.dataTransfer.setDragImage )
+		// 	event.dataTransfer.setDragImage(shadow, 0,  0);
+		// if( event.dataTransfer.setData )
+		// 	event.dataTransfer.setData('Text/plain', null);
+		this.get_center();
+
+		let l_a = event.clientY - this.center.y,
+			l_b = event.clientX - this.center.x;
+
+		if( l_a < 0 && l_b >= 0 ){
+			this.deg_op = Math.atan( l_b / -l_a )*180 / Math.PI;
+		} else if( l_a >= 0 && l_b > 0 ){
+			this.deg_op = Math.atan( l_a / l_b )*180 / Math.PI + 90;
+		} else if(  l_a > 0 && l_b <= 0 ){
+			this.deg_op = 270 - Math.atan( l_a / -l_b )*180 / Math.PI;
+		} else if(  l_a <= 0 && l_b < 0 ){
+			this.deg_op = Math.atan( -l_a / -l_b )*180 / Math.PI + 270;
+		}
+
+	},
+	rotating: function(event){
+		event.stopPropagation();
+		if( event.clientX == 0 && event.clientY == 0 ) return;
+
+		let y_d = this.center.y - event.clientY,
+			deg_ed = 0;
+
+		if( y_d < 0 ){
+			deg_ed = 180 - Math.atan( (event.clientX - this.center.x) / ( 0 - y_d ) )*180 / Math.PI;
+		} else {
+			deg_ed = Math.atan( (event.clientX - this.center.x) / y_d )*180 / Math.PI;
+		}
+
+		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
+
+		this.deg = deg < 0 ? deg + 360 : deg >= 360 ? deg - 360 : deg;
+		this._rotating(this.deg);
+	},
+	rotateend(event){
+		document.onmousemove = null;
+		document.onmouseup   = null;
+		this.rotating(event);
+		this.deg_bf = this.deg;
+	},
+	get_center(){
+		let center = {
+			x: this.el.offsetLeft  + this.size.w/2,
+			y: this.el.offsetTop + this.size.h/2,
+		};
+		this.center = center;
 	},
 	bind_resize: function(){
 		if( this.resizes.length > 0 ) return;
@@ -151,6 +272,9 @@ XyDragmove.prototype = {
 			resize.setAttribute('draggable', true);
 			resize.style.zIndex = i;
 			this.el_resizes.push(resize);
+			resize.addEventListener('mousedown', function(event){
+				event.stopPropagation();
+			}, false);
 			resize.addEventListener('dragstart', function(event){
 				event.stopPropagation();
 				_this.resizestart.call( _this, event, i);	
@@ -168,69 +292,6 @@ XyDragmove.prototype = {
 		this.el.appendChild(frag);
 		
 	},
-	bind_rotate: function(){
-		let rotate = document.createElement('span');
-		rotate.className = 'xy-rotate';
-		rotate.setAttribute('draggable', true);
-		this.el_rotate = rotate;
-		this.el.appendChild(rotate);
-
-		this.el_rotate.addEventListener('dragstart', this.rotatestart.bind(this), false);
-		this.el_rotate.addEventListener('drag', this.rotating.bind(this), false);
-		this.el_rotate.addEventListener('dragend', this.rotateend.bind(this), false);
-
-	},
-	rotatestart: function(event){
-		event.stopPropagation();
-		if( event.dataTransfer.setDragImage )
-			event.dataTransfer.setDragImage(shadow, 0,  0);
-		if( event.dataTransfer.setData )
-			event.dataTransfer.setData('Text/plain', null);
-		this.get_center();
-
-		let l_a = event.screenY - this.center.y,
-			l_b = event.screenX - this.center.x;
-
-		if( l_a < 0 && l_b >= 0 ){
-			this.deg_op = Math.atan( l_b / -l_a )*180 / Math.PI;
-		} else if( l_a >= 0 && l_b > 0 ){
-			this.deg_op = Math.atan( l_a / l_b )*180 / Math.PI + 90;
-		} else if(  l_a > 0 && l_b <= 0 ){
-			this.deg_op = 270 - Math.atan( l_a / -l_b )*180 / Math.PI;
-		} else if(  l_a <= 0 && l_b < 0 ){
-			this.deg_op = Math.atan( -l_a / -l_b )*180 / Math.PI + 270;
-		}
-
-	},
-	rotating: function(event){
-		event.stopPropagation();
-		if( event.screenX == 0 && event.screenY == 0 ) return;
-
-		let y_d = this.center.y - event.screenY,
-			deg_ed = 0;
-
-		if( y_d < 0 ){
-			deg_ed = 180 - Math.atan( (event.screenX - this.center.x) / ( 0 - y_d ) )*180 / Math.PI;
-		} else {
-			deg_ed = Math.atan( (event.screenX - this.center.x) / y_d )*180 / Math.PI;
-		}
-
-		let deg = this.deg_bf + Math.floor(deg_ed - this.deg_op);
-
-		this.deg = deg < 0 ? deg + 360 : deg >= 360 ? deg - 360 : deg;
-		this._rotating(this.deg);
-	},
-	rotateend(event){
-		this.rotating(event);
-		this.deg_bf = this.deg;
-	},
-	get_center(){
-		let center = {
-			x: this.el.offsetLeft  + this.size.w/2,
-			y: this.el.offsetTop + this.size.h/2,
-		};
-		this.center = center;
-	},
 	set_coord(coord){
 		this.axis.x = coord.x;
 		this.axis.y = coord.y;
@@ -246,49 +307,19 @@ XyDragmove.prototype = {
 		this.size_bf.h = this.size.h;
 		this.deg_bf    = this.deg;
 	},
-	dragstart: function(event){
-		event.stopPropagation();
-		if( event.dataTransfer.setDragImage )
-			event.dataTransfer.setDragImage(shadow, 0,  0);
-		if( event.dataTransfer.setData )
-			event.dataTransfer.setData('Text/plain', null);
-		this.mouse.x = event.screenX;
-		this.mouse.y = event.screenY;
-
-		this._dragstart(this.axis_bf);
-	},
-	dragmove(event){
-		event.stopPropagation();
-		if( event.screenX == 0 && event.screenY == 0 ) return;
-		let axis = {
-			x: this.axis_bf.x + ( event.screenX - this.mouse.x ),
-			y: this.axis_bf.y + ( event.screenY - this.mouse.y ),
-		}
-		this.axis.x = axis.x;
-		this.axis.y = axis.y;
-		this._dragmove(axis);
-	},
-	dragend: function(event){
-		this.dragmove(event);
-		this.set_record();
-		this._dragend({
-			x: this.axis.x,
-			y: this.axis.y,
-		});
-	},
 	resizestart: function(event, i){
 		event.stopPropagation();
 		if( event.dataTransfer.setDragImage )
 			event.dataTransfer.setDragImage(shadow, 0,  0);
 		if( event.dataTransfer.setData )
 			event.dataTransfer.setData('Text/plain', null);
-		this.mouse.x = event.screenX;
-		this.mouse.y = event.screenY;
+		this.mouse.x = event.clientX;
+		this.mouse.y = event.clientY;
 	},
 	resizing: function(event, index){
 		event.stopPropagation();
 		// 防跳动
-		if( event.screenX == 0 && event.screenY == 0 ) return;
+		if( event.clientX == 0 && event.clientY == 0 ) return;
 		let 
 			// 未发生改变属性
 			axis = {
@@ -301,8 +332,8 @@ XyDragmove.prototype = {
 			},
 			// 鼠标移动距离
 			distance = {
-				x: event.screenX - this.mouse.x,
-				y: event.screenY - this.mouse.y,
+				x: event.clientX - this.mouse.x,
+				y: event.clientY - this.mouse.y,
 			},
 			// w/h 变化值
 			mol_size = {

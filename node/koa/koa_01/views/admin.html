@@ -14,10 +14,10 @@
 			<div class="admin-sidebar">
 				<ul class="admin-navigate">
 					<li>
-						<a href="#/blog" class="admin-navigate-item">博客</li>
+						<a href="#/blog" class="admin-navigate-item">博客</a>
 					</li>
 					<li>
-						<a href="#/journal" class="admin-navigate-item">随记</li>
+						<a href="#/journal" class="admin-navigate-item">随记</a>
 					</li>
 				</ul>
 			</div>
@@ -25,7 +25,6 @@
 			<ul class="admin-section">
 				<li class="admin-section-item" view-port="/blog">
 					<div class="blog-header">
-						<a href="#/edit">新增</a>
 					</div>
 
 					<div class="blog-section">
@@ -34,7 +33,9 @@
 							<thead>
 								<tr>
 									<th>名称</th>
-									<th>分类</th>
+									<th>一级分类</th>
+									<th>二级分类</th>
+									<th>三级分类</th>
 									<th>创建时间</th>
 									<th>更新时间</th>
 									<th>操作</th>
@@ -43,8 +44,9 @@
 							<tbody id="blog-list"></tbody>
 						</table>
 					</div>
-
-					<ul id=""></ul>
+					<div class="blog-footer">
+						<a href="#/edit">新增</a>
+					</div>
 				</li>
 				<li class="admin-section-item" view-port="/journal">
 					<ul id=""></ul>
@@ -129,29 +131,14 @@
 						var artical_list = res.data;
 						var list = '';
 						for( var i = 0, len = artical_list.length; i < len; i++ ){
-							// list += 
-							// '<li class="artical-list">' +
-							// 	'<a class="artical-list-title" href="' + artical_list[i].id + '">' + artical_list[i].title + '</a>' +
-							// 	'<div class="artical-tips">' +
-							// 		'<span>' + artical_list[i].type_name_NO01 + '</span>' +
-							// 		'<span>' + artical_list[i].type_name_NO02 + '</span>' +
-							// 	'</div>' +
-							// 	'<dl>' +
-							// 		'<dt>时间:' + artical_list[i].create_time + '</dt>' +
-							// 		'<dt>更新:' + artical_list[i].update_time + '</dt>' +
-							// 	'</dl>' +
-							// 	'<dl>' +
-							// 		'<button>编辑</button>' +
-							// 		'<button>删除</button>' +
-							// 	'</dl>' +
-							// 	'<p>' + artical_list[i].introduction + '</p>'
-							// '</li>';
 							list += '<tr>' +
 								'<td>' + artical_list[i].title + '</td>' +
-								'<td>' + artical_list[i].type_name_NO01 + '-' + artical_list[i].type_name_NO02 + '</td>' +
+								'<td>' + artical_list[i].type_name_NO01 + '</td>' +
+								'<td>' + artical_list[i].type_name_NO02 + '</td>' +
+								'<td>' + artical_list[i].type_name_NO03 + '</td>' +
 								'<td>' + artical_list[i].create_time + '</td>' +
 								'<td>' + artical_list[i].update_time + '</td>' +
-								'<td><span>编辑</span><span>删除</span></td>' +
+								'<td><span blog-put="' + artical_list[i].id + '">编辑</span><span blog-del=' + artical_list[i].id + ' >删除</span></td>' +
 								'</tr>';
 						}
 						document.getElementById('blog-list').innerHTML = list;
