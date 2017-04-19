@@ -1,0 +1,10 @@
+.index-sidebar{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+}
+.index-content{
+    padding-left: 200px;
+}

@@ -15,9 +15,10 @@ const session 		= require('koa-session');
 const open 			= require("open");
 const dateformat 	= require('dateformat');
 
-const Router = require('koa-router');
+// const Router = require('koa-router');
 
-const router = Router();
+// const router = Router();
+const router = require('./routes');
 
 var wrapper = require('co-mysql'),
 	mysql 	= require('mysql'); 
@@ -48,7 +49,7 @@ onerror(app);
 	debug: true
 });
 
-var myRouter = new Router();
+// var myRouter = new Router();
 /**
  * 创建数据库: create database dbname
  * 创建表: CREATE TABLE IF NOT EXISTS user_info ( user_id VARCHAR(30), user_pwd VARCHAR(30) )
@@ -82,13 +83,6 @@ const CONFIG = {
 app.use(session(CONFIG, app));
 // or if you prefer all default config, just use => app.use(session(app));
 
-// app.use(ctx => {
-// 	console.log(ctx)
-// 	let n = ctx.session.views || 0;
-// 	ctx.session.views = ++n;
-// 	ctx.body = n + ' views';
-// });
-
 let isLogin = function *( next ){
 	if( !this.session.user_id )
 		return this.redirect( '/login' );
@@ -96,178 +90,23 @@ let isLogin = function *( next ){
 		yield next;
 }
 
-router
-	.get('/', function *( next ) {
-		let new_list = [];
-		try{
-			let new_list = yield db_operate.query(`SELECT title,id FROM artical`);
-			yield this.render('index', {
-				layout: false, 
-				title: '首页', 
-				new_list
-			});
-		} catch(err){
+// router
+// 	.get('/', function *( next ) {
+// 		let new_list = [];
+// 		try{
+// 			let new_list = yield db_operate.query(`SELECT title,id FROM artical`);
+// 			yield this.render('index', {
+// 				layout: false, 
+// 				title: '首页', 
+// 				new_list
+// 			});
+// 		} catch(err){
 
-		}
-	})
-	.get('/admin', isLogin , function *( next ) {
-		yield this.render('admin', {layout: false});
-	})
-	.get('/login', function *( next ) {
-		yield this.render('login', {layout: false, title: '登录'});
-	})
-	.post('/login', function *( cxt, next ){
-		let body = this.request.body;
-		if( !!body.user_id && body.user_pwd ){
-			try{
-				let exists = yield db_operate.query(`SELECT * FROM admin WHERE user_id="${body.user_id}" LIMIT 1`)
-				if( exists[0].user_pwd == body.user_pwd ){
-					
-					this.session.user_id = body.user_id;
-
-					this.body = {
-						code: '000000',
-						success: true,
-						message: '登录成功',
-					};
-				} else {
-					this.body = {
-						code: '000001',
-						success: true,
-						message: '密码或账户错误',
-					};
-				}
-			} catch(err) {
-				this.body =  {
-					code: '000002',
-					success: true,
-					message: '密码或账户错误',
-				};
-			}
-		} else {
-			this.body = {
-				code: '000001',
-				success: true,
-				message: '密码或账户错误',
-			};
-		}
-	})
-	.get('/artical/:id', function *(){
-		
-		yield this.render('artical', { layout: false });
-	})
-	.get('/artical_list/:type', function *(){
-		try{
-			let artical_list = yield db_operate.query(`SELECT * FROM artical WHERE type_NO01="${this.params.type}"`)
-			this.body = {
-				code: '000000',
-				success: true,
-				message: '查询成功',
-				data: artical_list,
-			}
-		} catch(err) {
-			this.body = {
-				code: '000000',
-				success: true,
-				message: '无此类文章',
-				data: [],
-			}
-		}
-	})
-	.post('/artical/:method', function *( cxt, next ){
-		let body = this.request.body;
-
-		let type = {
-			blog: {
-				name: '博客',
-				child: {
-					web_front_end: {
-						name: 'web前端',
-						child: {
-							framework: {
-								name: '框架',
-							}
-						}
-					}
-				}
-			}
-		};
-		let new_time = new Date().valueOf();
-		let id = `${body.type_NO01}-${body.type_NO02}-${body.type_NO03}-${new_time}`,
-			create_time = dateformat(new Date(), 'yyyy-mm-dd hh:HH:M'),
-			type_NO01 = body.type_NO01,
-			type_NO02 = body.type_NO02,
-			type_NO03 = body.type_NO03;
-
-		try {
-			let exists = yield db_operate.query(`SELECT * FROM artical where id = ${id}`)
-		} catch( err ) {
-			switch (this.params.method){
-				case 'get':
-					let markdown = yield db_operate.query(`select content from artical where id = "${body.id}"`);
-					this.body = {
-						code: '000000',
-						success: true,
-						message: '请求成功',
-						data: {
-							content: markdown[0].content
-						}
-					};
-					break;
-				case 'add':
-					let content = body.content.replace(/(\`|\'|\")/g, function(str){
-						return "\\" + str
-					});
-					console.log(content)
-					yield db_operate.query(`insert into artical (
-							type_NO01,
-							type_NO02,
-							type_NO03,
-							type_name_NO01,
-							type_name_NO02,
-							type_name_NO03,
-							create_time,
-							id,
-							title,
-							content
-						) 
-						values 
-						(
-							"${type_NO01}",
-							"${type_NO02}",
-							"${type_NO03}",
-							"${type[type_NO01].name}",
-							"${type[type_NO01].child[type_NO02].name}",
-							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
-							"${create_time}",
-							"${id}",
-							"${body.title}",
-							"${content}"
-						)`);
-					this.body = {
-						code: '000000',
-						success: true,
-						message: '请求成功'
-					}
-					break;
-				case 'del':
-					yield db_operate.query(`delete from artical where id = "${body.id}"`);
-					this.body = {
-						code: '000000',
-						success: true,
-						message: '删除成功'
-					}
-					break;
-			}
-
-		}
-
-	});
+// 		}
+// 	})
 
 
-app.use(router.routes());
-
-// router.use('/', index.routes(), index.allowedMethods());
+app.use(router.routes(),  router.allowedMethods());
 
 // response
 app.on('error', function(err, ctx){
