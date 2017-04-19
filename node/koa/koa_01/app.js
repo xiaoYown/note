@@ -13,6 +13,7 @@ const logger 		= require('koa-logger');
 const redisStore 	= require('koa-redis');
 const session 		= require('koa-session');
 const open 			= require("open");
+const dateformat 	= require('dateformat');
 
 const Router = require('koa-router');
 
@@ -193,7 +194,7 @@ router
 		};
 		let new_time = new Date().valueOf();
 		let id = `${body.type_NO01}-${body.type_NO02}-${body.type_NO03}-${new_time}`,
-			create_time = new_time.toLocaleString(),
+			create_time = dateformat(new Date(), 'yyyy-mm-dd hh:HH:M'),
 			type_NO01 = body.type_NO01,
 			type_NO02 = body.type_NO02,
 			type_NO03 = body.type_NO03;
@@ -225,6 +226,7 @@ router
 							type_name_NO01,
 							type_name_NO02,
 							type_name_NO03,
+							create_time,
 							id,
 							title,
 							content
@@ -237,6 +239,7 @@ router
 							"${type[type_NO01].name}",
 							"${type[type_NO01].child[type_NO02].name}",
 							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
+							"${create_time}",
 							"${id}",
 							"${body.title}",
 							"${content}"
