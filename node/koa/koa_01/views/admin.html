@@ -14,15 +14,29 @@
 			<div class="admin-sidebar">
 				<ul class="admin-navigate">
 					<li>
+						<a href="#/" class="admin-navigate-item">主页</a>
+					</li>
+					<li>
 						<a href="#/blog" class="admin-navigate-item">博客</a>
 					</li>
 					<li>
-						<a href="#/journal" class="admin-navigate-item">随记</a>
+						<a href="#/dynamic" class="admin-navigate-item">动态</a>
+					</li>
+					<li>
+						<a href="#/attribute" class="admin-navigate-item">属性</a>
+					</li>
+					<li>
+						<a href="/">首页</a>
 					</li>
 				</ul>
 			</div>
 			<!-- 视口 -->
 			<ul class="admin-section">
+				<!-- 主页 -->
+				<li class="admin-section-item" view-port="/">
+					主页
+				</li>
+				<!-- 博客 -->
 				<li class="admin-section-item" view-port="/blog">
 					<div class="blog-header">
 					</div>
@@ -48,8 +62,13 @@
 						<a href="#/edit">新增</a>
 					</div>
 				</li>
-				<li class="admin-section-item" view-port="/journal">
-					<ul id=""></ul>
+				<!--  动态  -->
+				<li class="admin-section-item" view-port="/dynamic">
+					动态
+				</li>
+				<!-- 属性 -->
+				<li class="admin-section-item" view-port="/attribute">
+					属性
 				</li>
 
 				<li class="admin-section-item" view-port="/edit">
@@ -100,6 +119,9 @@
 	// router
 	var router = [
 		{
+			path: '/',
+			cb: 'index'
+		},{
 			path: '/edit',
 			cb: 'edit'
 		},{
@@ -108,6 +130,9 @@
 		}
 	];
 	var views = {
+		index: function(){
+
+		},
 		edit: function(){
 			if( !editor ){
 				editor = editormd("test-editormd", {
@@ -142,6 +167,13 @@
 								'</tr>';
 						}
 						document.getElementById('blog-list').innerHTML = list;
+
+						//删除
+						var dels = document.querySelectorAll('[blog-del]');
+
+						for( var i = 0, len = dels.length; i < len; i++ ){
+							dels[i].onclick = del;
+						}
 	                }
 	            },
 	            error: function(status){
@@ -154,6 +186,10 @@
 	function viewChange(){
 		var path = location.hash.substring(1);
 		let view_ports = document.querySelectorAll('li[view-port]');
+		
+		if( !path ){
+			path = '/';
+		}
 
 		for( var i = 0, len = view_ports.length; i < len; i++ ){
 			if( path == view_ports[i].getAttribute('view-port') ){
@@ -164,7 +200,11 @@
 		}
 		for( var i = 0, len = router.length; i < len; i++ ){
 			if( router[i].path == path ){
-				views[path.substring(1)]();
+				if( path !== '/' ){
+					views[path.substring(1)]();
+				} else {
+					views.index();
+				}
 				break;
 			}
 		}
@@ -174,7 +214,29 @@
 
 	viewChange();
 
-	// submit aticale
+	/* 操作 */
+	// del
+	function del(){
+		var _this = this;
+		var data = {
+			id: this.getAttribute('blog-del')
+		};
+		$.ajax({
+			url: '/artical/del',
+			type: 'POST',
+			dataType: 'JSON',
+			data: data,
+			success: function(res){
+				console.log(res)
+				var tr = _this.parentNode.parentNode;
+				tr.parentNode.removeChild(tr);
+			},
+			error: function(){
+
+			}
+		});
+	}
+	// add
 	function submit(){
 		var type_NO01 = document.getElementById('type_NO01'),
 			type_NO02 = document.getElementById('type_NO02'),
@@ -202,25 +264,6 @@
                 console.log(status)
             }
         });
-
-		// var show = document.getElementById('show');
-
-		// editormd.markdownToHTML("show", {
-		// 	markdown        : editor.getMarkdown() ,//+ "\r\n" + $("#append-test").text(),
-		// 	//htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
-		// 	htmlDecode      : "style,script,iframe",  // you can filter tags decode
-		// 	//toc             : false,
-		// 	// tocm            : true,    // Using [TOCM]
-		// 	// tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
-		// 	//gfm             : false,
-		// 	//tocDropdown     : true,
-		// 	markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
-		// 	// emoji           : true,
-		// 	// taskList        : true,
-		// 	// tex             : true,  // 默认不解析
-		// 	flowChart       : true,  // 默认不解析
-		// 	sequenceDiagram : true  // 默认不解析
-		// });
 
 	}
 	document.getElementById('add-post').addEventListener('click', submit);

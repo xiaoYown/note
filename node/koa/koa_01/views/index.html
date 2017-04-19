@@ -3,14 +3,20 @@
     <head>
         <meta charset="utf-8">
         <title><%= title %></title>
+        <link rel="stylesheet" href="/static/css/reset.css">
+        <link rel="stylesheet" href="/static/css/index.css">
     </head>
     <body>
         <div>
             <div class="index-sidebar"></div>
             <div class="index-content">
-                <% for( var i = 0, len = new_list.length; i < len; i++ ) {%>
-                    <a href="/artical/<%= new_list[i].id  %>"> <%= new_list[i].title %> </a>
-                <% } %>
+                <ul>
+                    <% for( var i = 0, len = new_list.length; i < len; i++ ) {%>
+                        <li class="blog-item">
+                            <a href="/artical/<%= new_list[i].id  %>"> <%= new_list[i].title %> </a>
+                        </li>
+                    <% } %>
+                </ul>
             </div>
             <a href="/admin"> 后台系统 </a>
         </div>

@@ -61,6 +61,7 @@ var myRouter = new Router();
  * 
  * 插入行: inert into table_name (col1_name,col2_name) values (col1_val, col2_val)
  * 修改:   update table_name set _key_=_value_ where __key__=__value__ (limit 1) 
+ * 删除:   delete from table_name where id = _id
  */
 
 /**
@@ -98,16 +99,15 @@ router
 	.get('/', function *( next ) {
 		let new_list = [];
 		try{
-			let new_list = yield db_operate.query(`select title, id from artical`);
+			let new_list = yield db_operate.query(`SELECT title,id FROM artical`);
+			yield this.render('index', {
+				layout: false, 
+				title: '首页', 
+				new_list
+			});
 		} catch(err){
 
 		}
-
-		yield this.render('index', {
-			layout: false, 
-			title: '首页', 
-			new_list
-		});
 	})
 	.get('/admin', isLogin , function *( next ) {
 		yield this.render('admin', {layout: false});
@@ -203,17 +203,7 @@ router
 		} catch( err ) {
 			switch (this.params.method){
 				case 'get':
-				console.log(`"${type_NO01}",
-							"${type_NO02}",
-							"${type_NO03}",
-							"${type[type_NO01].name}",
-							"${type[type_NO01].child[type_NO02].name}",
-							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
-							"${id}",
-							"${body.title}",
-							"${body.content}"`)
-					console.log(`select content from artical where id = "${this.request.body.id}"`)
-					let markdown = yield db_operate.query(`select content from artical where id = "${this.request.body.id}"`);
+					let markdown = yield db_operate.query(`select content from artical where id = "${body.id}"`);
 					this.body = {
 						code: '000000',
 						success: true,
@@ -224,6 +214,10 @@ router
 					};
 					break;
 				case 'add':
+					let content = body.content.replace(/(\`|\'|\")/g, function(str){
+						return "\\" + str
+					});
+					console.log(content)
 					yield db_operate.query(`insert into artical (
 							type_NO01,
 							type_NO02,
@@ -245,34 +239,27 @@ router
 							"${type[type_NO01].child[type_NO02].child[type_NO03].name}",
 							"${id}",
 							"${body.title}",
-							"${body.content}"
-						)`)
+							"${content}"
+						)`);
 					this.body = {
 						code: '000000',
 						success: true,
 						message: '请求成功'
 					}
 					break;
+				case 'del':
+					yield db_operate.query(`delete from artical where id = "${body.id}"`);
+					this.body = {
+						code: '000000',
+						success: true,
+						message: '删除成功'
+					}
+					break;
 			}
 
 		}
 
-	})
-	.post('/register', function *( cxt, next ) {
-		let body = this.request.body;
-		// if( !!body.user_id && body.user_pwd ){
-		// 	console.log(`SELECT * FROM user_info WHERE EXISTS user_id="${body.user_id}"`)
-		// 	// let exists = yield db_operate.query(`SELECT * FROM user_info WHERE EXISTS user_id="${body.user_id}"`)
-		// 	// console.log(exists)
-		// 	// yield db_operate.query(`INSERT INTO user_info (user_id, user_pwd) VALUES ("${body.user_id}","${body.user_pwd}")`);
-
-		// 	this.body = {
-		// 		code: '000000',
-		// 		success: true,
-		// 		message: '注册成功',
-		// 	};
-		// }
-	}, router.allowedMethods());
+	});
 
 
 app.use(router.routes());
