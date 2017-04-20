@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+<div id="div"></div>
+<button id="button">change</button>
+</body>
+</html>
+<script type="text/javascript">
+	// function defineReactive(obj, key, value) {
+	//     var dep = new Dep()
+	//     Object.defineProperty(obj, key, {
+	//         enumerable: true,
+	//         configurable: true,
+	//         get: function reactiveGetter() {
+	//             if (Dep.target) {
+	//                 dep.depend()
+	//             }
+	//             return value
+	//         },
+	//         set: function reactiveSetter(newVal) {
+	//             if (value === newVal) {
+	//                 return
+	//             } else {
+	//                 value = newVal
+	//                 dep.notify()
+	//             }
+	//         }
+	//     })
+	// }
+	var div = document.getElementById('div');
+	var content = {};
+	var num = 0;
+	Object.defineProperty(content, 'value', {
+		get(){
+			// console.log(content.value)
+		},
+		set(){
+			console.log(this.value)
+			div.innerHTML = num++;
+		}
+	});
+	document.getElementById('button').addEventListener('click', function(){
+		if( content )
+			content.value += 1;
+		else
+			content.value = 1;
+	}, false);
+</script>
