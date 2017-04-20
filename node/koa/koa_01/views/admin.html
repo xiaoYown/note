@@ -101,19 +101,19 @@
 		</div>
 	</body>
 </html>
-<script src="/static/js/jquery.js"></script>
-<script src="/static/js/editormd.js"></script>
-<script src="/static/js/codemirror.js"></script>
-<script src="/static/js/modes.min.js"></script>
+<!-- <script src="/static/js/codemirror.js"></script>
 <script src="/static/js/addons.min.js"></script>
-<script src="/static/js/marked.min.js"></script>
-<script src="/static/js/prettify.min.js"></script>
+<script src="/static/js/modes.min.js"></script> -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/editor/editormd.js"></script>
+<script src="/static/js/editor/marked.min.js"></script>
+<script src="/static/js/editor/prettify.min.js"></script>
 
-<script src="/static/js/underscore.min.js"></script>
-<script src="/static/js/raphael.min.js"></script>
-<script src="/static/js/sequence-diagram.min.js"></script>
-<script src="/static/js/flowchart.min.js"></script>
-<script src="/static/js/jquery.flowchart.min.js"></script>
+<script src="/static/js/editor/underscore.min.js"></script>
+<script src="/static/js/editor/raphael.min.js"></script>
+<script src="/static/js/editor/sequence-diagram.min.js"></script>
+<script src="/static/js/editor/flowchart.min.js"></script>
+<script src="/static/js/editor/jquery.flowchart.min.js"></script>
 
 <script>
 	// router
@@ -157,7 +157,7 @@
 				height  : 640,
 				markdown: this.md,
 				syncScrolling : "single",
-				path    : "../static/js/"
+				path    : "../static/js/editor/"
 			});
 		},
 		rem: function(){
@@ -179,7 +179,7 @@
 		},
 		blog: function(){
 			$.ajax({
-				url: '/artical_list/blog',
+				url: '/list/blog',
 	            type: 'GET',
 	            dataType: 'JSON',
 	            data: {},
