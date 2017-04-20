@@ -27,7 +27,7 @@ router.post('/:method', isLogin, function *( cxt, next ){
 		};
 		let new_time = new Date().valueOf();
 		let id = `${body.type_NO01}-${body.type_NO02}-${body.type_NO03}-${new_time}`,
-			create_time = dateformat(new Date(), 'yyyy-mm-dd hh:HH:M'),
+			create_time = dateformat(new Date(), 'yyyy-mm-dd HH:M:S'),
 			type_NO01 = body.type_NO01,
 			type_NO02 = body.type_NO02,
 			type_NO03 = body.type_NO03;

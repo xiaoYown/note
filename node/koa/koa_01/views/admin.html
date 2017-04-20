@@ -163,7 +163,6 @@
 			var wrap = document.createElement('div');
 			wrap.setAttribute('id', 'md-wrap');
 			document.getElementById(options.el).appendChild(wrap);
-			
 			this.el = editormd("md-wrap", {
 				width   : "90%",
 				height  : 640,
@@ -173,6 +172,7 @@
 			});
 		},
 		rem: function(){
+			this.md = '';
 			this.el.editor.remove();
 		},
 		getMarkdown: function(){
@@ -198,14 +198,21 @@
 	            success: function(res){
 	                if( res.code == '000000' ){
 						var artical_list = res.data;
-						var list = '';
+						var list = '',
+							time = '';
 						for( var i = 0, len = artical_list.length; i < len; i++ ){
+							time = artical_list[i].create_time.replace(/(T|\.000Z)/g, function(str){
+								if( str === 'T' )
+									return '&nbsp;&nbsp;';
+								else
+									return '';
+							});
 							list += '<tr>' +
 								'<td>' + artical_list[i].title + '</td>' +
 								'<td>' + artical_list[i].type_name_NO01 + '</td>' +
 								'<td>' + artical_list[i].type_name_NO02 + '</td>' +
 								'<td>' + artical_list[i].type_name_NO03 + '</td>' +
-								'<td>' + artical_list[i].create_time + '</td>' +
+								'<td>' + time + '</td>' +
 								'<td>' + artical_list[i].update_time + '</td>' +
 								'<td><span blog-put="' + artical_list[i].id + '">编辑</span><span blog-del=' + artical_list[i].id + ' >删除</span></td>' +
 								'</tr>';
@@ -232,14 +239,18 @@
 		}
 	};
 	// viewport change
-	function viewChange(){
+	function viewChange(hash){
+
 		var path = location.hash.substring(1);
 		let view_ports = document.querySelectorAll('li[view-port]');
 		
 		if( !path ){
 			path = '/';
 		}
-
+		// 编辑离开路由清理记录
+		if( !!hash && (hash.oldURL.match(/#\/(.+)/)[1] === 'edit') ){
+			editor.rem();
+		}
 		for( var i = 0, len = view_ports.length; i < len; i++ ){
 			if( path == view_ports[i].getAttribute('view-port') ){
 				view_ports[i].style.display = 'block';
@@ -287,7 +298,6 @@
 	}
 	// put
 	function put(){
-		console.log('-----')
 		var data = {
 			id: this.getAttribute('blog-put')
 		};
@@ -335,7 +345,6 @@
             success: function(res){
                 if( res.code == '000000' ){
 					console.log(res);
-					editor.md = '';
 					editor.rem();
 					window.location.href = '#/blog';
                 }
