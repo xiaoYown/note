@@ -101,11 +101,23 @@
 		</div>
 	</body>
 </html>
-<!-- <script src="/static/js/codemirror.js"></script>
-<script src="/static/js/addons.min.js"></script>
-<script src="/static/js/modes.min.js"></script> -->
+<!-- 
+	<script src="/static/js/editor/editormd.js"></script>
+
+	<script src="/static/js/editor/underscore.min.js"></script>
+	<script src="/static/js/editor/raphael.min.js"></script>
+	<script src="/static/js/editor/sequence-diagram.min.js"></script>
+	<script src="/static/js/editor/flowchart.min.js"></script>
+	<script src="/static/js/editor/jquery.flowchart.min.js"></script>
+
+-->
+
 <script src="/static/js/jquery.js"></script>
+
 <script src="/static/js/editor/editormd.js"></script>
+<script src="/static/js/editor/codemirror.js"></script>
+<script src="/static/js/editor/modes.min.js"></script>
+<script src="/static/js/editor/addons.min.js"></script>
 <script src="/static/js/editor/marked.min.js"></script>
 <script src="/static/js/editor/prettify.min.js"></script>
 
@@ -139,8 +151,8 @@
 			width   : "90%",
 			height  : 640,
 			markdown: options.md,
-			syncScrolling : "single",
-			path    : "../static/js/"
+			syncScrolling : "single"
+			// path    : "../static/js/" 动态加载 script
 		});
 	}
 	// editor 控制
