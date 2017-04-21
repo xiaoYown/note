@@ -10,18 +10,14 @@
 				:class="{ disable: info.page <= 1 }"
 			) 上一页
 			li.its-pages-item(
-				v-show="page.first > 0"
-				:class="{ active: page.first == info.page }",
+				v-show="page.first > 0",
 				@click="link('page-1')"	
 			) {{ page.first }}
-			li.its-pages-item(
-				:class="{ active: page.second == info.page }",
-				v-show="info.pages > 1",
-				@click="link('page-2')"
+			li.its-pages-item.active(
+				@click="link('page-2')"	
 			) {{ page.second }}
 			li.its-pages-item(
-				:class="{ active: page.third == info.page }",
-				v-show="page.third <= info.pages",
+				v-show="info.pages > 1 && info.page < info.pages",
 				@click="link('page-3')"	
 			) {{ page.third }}
 			li.its-pages-item(
@@ -70,6 +66,7 @@
 		},
 		data(){
 			return {
+				local: 'first',
 				index: '',
 				pageSize: '10',
 				list: [

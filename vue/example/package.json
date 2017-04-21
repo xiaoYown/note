@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
+    "jquery": "^3.2.1",
     "velocity": "^0.7.2",
     "vue": "^2.1.3"
   },
