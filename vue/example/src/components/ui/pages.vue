@@ -10,14 +10,18 @@
 				:class="{ disable: info.page <= 1 }"
 			) 上一页
 			li.its-pages-item(
-				v-show="page.first > 0",
+				v-show="page.first > 0"
+				:class="{ active: page.first == info.page }",
 				@click="link('page-1')"	
 			) {{ page.first }}
-			li.its-pages-item.active(
-				@click="link('page-2')"	
+			li.its-pages-item(
+				:class="{ active: page.second == info.page }",
+				v-show="info.pages > 1",
+				@click="link('page-2')"
 			) {{ page.second }}
 			li.its-pages-item(
-				v-show="info.pages > 1 && info.page < info.pages",
+				:class="{ active: page.third == info.page }",
+				v-show=" info.pages > 2 || page.third == info.pages",
 				@click="link('page-3')"	
 			) {{ page.third }}
 			li.its-pages-item(
@@ -66,7 +70,6 @@
 		},
 		data(){
 			return {
-				local: 'first',
 				index: '',
 				pageSize: '10',
 				list: [
@@ -108,6 +111,11 @@
 			page(){
 				let page  = {},
 					_page = this.info.page;
+				if( _page === 1 ){
+					_page += 1;
+				} else if( _page === this.info.pages ){
+					_page -= 1;
+				}
 				page.first  = _page - 1;
 				page.second = _page;
 				page.third  = _page + 1;
@@ -117,7 +125,10 @@
 		},
 		methods: {
 			indexChange(){
-				this.index = this.index.replace(/[^\d]/g,'');
+				let index = this.index.replace(/[^\d]/g,'');
+				if( index > this.info.pages )
+					index = this.info.pages;
+				this.index = index;
 			},
 			sizeChange(size){
 				this.pageSize = size;
