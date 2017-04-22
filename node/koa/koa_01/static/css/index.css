@@ -10,7 +10,7 @@
 }
 .index-sidebar-list{
     text-align: center;
-    line-height: 30px;
+    line-height: 40px;
 }
 .index-sidebar-item{
     position: relative;
@@ -27,7 +27,7 @@
     top: 0;
     bottom: 0;
     width: 0;
-    background-color: #56aaff;
+    background-color: #24292e;
     transition: all .5s;
 }
 .index-sidebar-item:hover:after{

@@ -89,7 +89,12 @@ router.post('/:method', isLogin, function *( cxt, next ){
 					content = body.content.replace(/(\`|\'|\")/g, function(str){
 						return "\\" + str
 					});
-					yield db_operation.query(`update artical set content = ${content}, update_time = ${create_time} where id = "${body.id} "`)
+					yield db_operate.query(`update artical set content = "${content}", update_time = "${create_time}" where id = "${body.id}"`);
+					this.body = {
+						code: '000000',
+						success: true,
+						message: '修改成功'
+					}
 					break;
 				case 'del':
 					yield db_operate.query(`delete from artical where id = "${body.id}"`);

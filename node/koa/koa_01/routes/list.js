@@ -5,7 +5,8 @@ router.get('/:type', function *(){
 		try{
 			let artical_list = yield db_operate.query(
 					`SELECT 
-					title, 
+					title,
+					id,
 					type_name_NO01,
 					type_name_NO02, 
 					type_name_NO03, 

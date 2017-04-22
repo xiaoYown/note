@@ -2,7 +2,10 @@ const router = require('koa-router')();
 const db_operate = require('../mysql').db_operate;
 
 router.get('/', function *( next ) {
-		yield this.render('login', {layout: false, title: '登录'});
+		if( !!this.session.user_id )
+			this.redirect('/admin');
+		else
+			yield this.render('login', {layout: false, title: '登录'});
 	});
 router.post('/', function *( cxt, next ){
 		let body = this.request.body;
