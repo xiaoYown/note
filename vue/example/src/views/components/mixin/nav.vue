@@ -2,6 +2,7 @@
 	nav.nav-demo
 		.nav-content
 			a.select.link(href="./") home
+			router-link.select.link(to="/drag") drag
 			div.select.user-name {{ userInfo.name }}
 </template>
 

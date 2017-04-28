@@ -20,6 +20,13 @@ const routes = [
 			user: true,
 		},
 	},
+	{ 	path: '/drag', 	
+		name: 'drag',
+		component: require('./views/drag.vue'),
+		meta: {
+			user: true,
+		},
+	},
 	{ 	path: '/login', 	
 		name: 'login',
 	},

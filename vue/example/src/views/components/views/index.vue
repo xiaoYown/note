@@ -27,6 +27,8 @@
 </template>
 
 <script>
+	require('sass/base.scss');
+
 	export default {
 		components :{
 			'xy-switch': require('components/ui/switch.vue'),

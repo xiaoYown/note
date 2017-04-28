@@ -43,7 +43,7 @@
 			span 每页
 			li.its-pages-item
 				label.its-pages-select
-					.checked {{ pageSize }}
+					.checked {{ info.pageSize }}
 					input(type="checkbox")
 					ul.select-list
 						li(
@@ -89,20 +89,20 @@
 				],
 			}
 		},
-		create(){
-			for( let i = 0, len = this.list.length; i < len; i++ ){
-				this.list[i].checked = false;
-				if( this.page.pageSize == this.list[i].id ){
-					this.list[i].checked = true;
-				}
-			}
-		},
+		// created(){
+		// 	for( let i = 0, len = this.list.length; i < len; i++ ){
+		// 		this.list[i].checked = false;
+		// 		if( this.info.pageSize == this.list[i].id ){
+		// 			this.list[i].checked = true;
+		// 		}
+		// 	}
+		// },
 		watch: {
 			'info': {
 				handler(newVal){
 					if( this.index <= newVal.pages )
 						this.index = newVal.page;
-					this.pageSize = newVal.pageSize;
+					// this.pageSize = newVal.pageSize;
 				},
 				deep: true
 			}
@@ -125,13 +125,13 @@
 		},
 		methods: {
 			indexChange(){
-				let index = this.index.replace(/[^\d]/g,'');
+				let index = (this.index + '').replace(/[^\d]/g,'');
 				if( index > this.info.pages )
 					index = this.info.pages;
 				this.index = index;
 			},
 			sizeChange(size){
-				this.pageSize = size;
+				// this.pageSize = size;
 				this.index = 1;
 				this.$emit('page-link', {
 					page: 1,
