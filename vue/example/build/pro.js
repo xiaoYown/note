@@ -22,7 +22,7 @@ var assetsPath = path.join(path.resolve(__dirname, '../dist'), config.build.asse
 
 rm('-rf', assetsPath);
 mkdir('-p', assetsPath);
-cp('-R', 'static/', assetsPath);
+cp('-R', 'static/', path.join(assetsPath, '../'));
 
 webpack(webpackMerge, function (err, stats) {
 	spinner.stop()

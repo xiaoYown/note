@@ -40,6 +40,9 @@ app.use(require('connect-history-api-fallback')());
 app.use(devMiddleware);
 app.use(hotMiddleware);
 
+var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
+app.use(staticPath, express.static('./static'))
+
 var pathUrl = require('../config/config').pathUrl;
 
 module.exports = app.listen(config.dev.port, function(err){

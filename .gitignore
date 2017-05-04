@@ -26,3 +26,6 @@ node/koa/koa_01/static/js/jquery.js
 vue/example/npm-debug.log
 db/mysql/.Archive/
 grunt/
+npm/_uglify-js/
+lib/require.js/node_modules/
+npm/.Archive/npm_update.md/2017-04-21 14-44-07.md

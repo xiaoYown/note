@@ -7,7 +7,7 @@ module.exports = {
 		favicon: path.resolve(__dirname, '../src/assets/images/favicon.ico'),
 		assetsRoot: path.resolve(__dirname, '../dist'),
 		assetsSubDirectory: 'static',
-		assetsPublicPath: './',
+		assetsPublicPath: '/',
 		productionSourceMap: false,
 		chunks: [
 			// {
