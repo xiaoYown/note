@@ -47,7 +47,7 @@
                 this.axis = data
             },
             setStyle(data){
-                console.log(data.r)
+                // console.log(data.r)
                 this.style = {
                     top   : data.y + 'px',
                     left  : data.x + 'px',

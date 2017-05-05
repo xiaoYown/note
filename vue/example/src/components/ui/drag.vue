@@ -393,14 +393,12 @@
 
 						break;
 					case 't-r':
-						// distance.x = Math.cos(this.axis.r*Math.PI/180)*(event.clientX - this.$refs['resize-b-l'].getBoundingClientRect().left);
-						// distance.y = Math.sin(this.axis.r*Math.PI/180)*(event.clientY - this.$refs['resize-b-l'].getBoundingClientRect().left);
-
+						// 鼠标 - 静止点 距离
 						L = Math.sqrt(Math.pow(event.clientX - this.location.x, 2) + Math.pow(event.clientY - this.location.y, 2));
-						deg_l = Math.acos((event.clientX - this.location.x)/L);
+						deg_l = (Math.acos(Math.abs(event.clientX - this.location.x)/L)*180/Math.PI - this.axis.r)*Math.PI/180;
 						distance.x = Math.cos(deg_l)*L;
 						distance.y = Math.sin(deg_l)*L;
-						if( Math.abs(distance.x) > Math.abs(distance.y) ){
+						if( distance.x > distance.y || Math.abs(distance.x) > Math.abs(distance.y) ){
 							axis.w = distance.x;
 							axis.h = distance.x;
 						} else {
