@@ -29,4 +29,5 @@ grunt/
 npm/_uglify-js/
 lib/require.js/node_modules/
 npm/.Archive/npm_update.md/2017-04-21 14-44-07.md
-*.md
+html/转义符/.Archive/
+js/events/.Archive/
