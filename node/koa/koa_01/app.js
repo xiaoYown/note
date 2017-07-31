@@ -14,7 +14,7 @@ const redisStore 	= require('koa-redis');
 const session 		= require('koa-session');
 const open 			= require("open");
 const dateformat 	= require('dateformat');
-
+const staticCache   = require('koa-static-cache'); 
 // const Router = require('koa-router');
 
 // const router = Router();
@@ -34,7 +34,14 @@ var options = {
 var pool = mysql.createPool(options),
 	db_operate = wrapper(pool);
 
-app.use(convert(require('koa-static2')("/static", __dirname + '/static')));
+// app.use(convert(require('koa-static2')("/static", __dirname + '/static')));
+// app.use(convert(staticCache('/static')));
+app.use(staticCache({
+	buffer: true,
+	gzip: true,
+	prefix: '/static',
+	dir: path.join(__dirname, '/static')
+}))
 app.use(convert(bodyparser));
 app.use(convert(json()));
 // app.use(convert(logger()));
