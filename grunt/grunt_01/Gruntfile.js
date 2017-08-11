@@ -20,13 +20,18 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       }
 		},
+		jshint: {
+			all: ['src/*.js', 'src/*/*.js'],
+			options: grunt.file.readJSON('./.jshintrc')
+		},
 		watch: {
 			scripts: {
 				files: ['src/*.js', 'src/*/*.js'],
-				tasks: ['uglify', 'concat']
-			},
-			options: {
-				spawn: true
+				tasks: ['jshint', 'default'],
+				options: {
+					spawn: false,
+					reload: true
+				}
 			}
 		}
 		// my_src_files: ['src/foo/*.js', 'src/bar/*.js']
@@ -35,10 +40,10 @@ module.exports = function(grunt) {
   // Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
   grunt.registerTask('default', ['uglify', 'concat']);
-  grunt.registerTask('watch', ['watch']);
 
 };
