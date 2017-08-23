@@ -44,7 +44,7 @@ ScrollWheel.prototype = {
     let top = false, bottom = false, scrollTop = this.wrap.scrollTop
     if (scrollTop === 0) {
       top = true
-    } else if (scrollTop + this.wrap.offsetHeight === this.main.offsetHeight) {
+    } else if (scrollTop + this.wrap.offsetHeight >= this.main.offsetHeight) {
       bottom = true
     }
     if (top && event.deltaY < 0 || bottom && event.deltaY > 0) {
