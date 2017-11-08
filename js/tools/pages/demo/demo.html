@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./page.css">
+  </head>
+  <body>
+    <div id="page-cop"></div>
+  </body>
+</html>
+<script src="./page.js"></script>
+<script>
+  var page = new Page({
+    // 放置 page 的元素
+    wrap: 'page-cop',
+    // 进入时页码
+    index: 1,
+    // 每页条数
+    pageSize: 10,
+    // 总条数
+    total: 100,
+    // 回调
+    cb: function (data) {
+      console.log(data)
+    }
+  })
+  page.init()
+</script>
