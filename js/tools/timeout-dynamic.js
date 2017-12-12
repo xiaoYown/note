@@ -20,3 +20,14 @@ Timer.prototype = {
     }
   }
 }
+
+// new Timer({
+//   isStop: function () {
+//     return _this.chartList[i].n >= 10
+//   },
+//   cb: function () {
+//     _this.chartList[i].n += 1
+//     console.log(_this.chartList[i].id, _this.chartList[i].n)
+//   },
+//   time: 20
+// })
