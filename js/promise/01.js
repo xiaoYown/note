@@ -38,9 +38,9 @@
 		Promise.race() // 竞速，完成一个即可
 
 */
-var colors = require('colors');
+// const colors = require('colors');
 
-console.log('red'.red)
+// console.log('red'.red)
 
 function runAsync(time){
 
