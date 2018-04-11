@@ -13,7 +13,10 @@ const userSetting = {
     "eslint.validate": [
         "javascript",
         "javascriptreact",
-        "typescript"
+        "html",
+        "vue",
+        "typescript",
+        "typescriptreact"
     ]
 };
 // 快捷键设置
