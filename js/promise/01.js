@@ -45,15 +45,15 @@
 function runAsync(time){
 
 	var p = new Promise(function(resolve, reject){
-			//做一些异步操作
-			setTimeout(function(){
-				if( time % 2 === 1 ){
-					reject( time );
-				} else {
-			    	resolve(time);
-				}
-			}, time);
-		});
+		//做一些异步操作
+		setTimeout(function(){
+			if( time % 2 === 1 ){
+				reject( time );
+			} else {
+					resolve(time);
+			}
+		}, time);
+	});
 
 	return p;            
 }
