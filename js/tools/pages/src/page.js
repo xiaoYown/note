@@ -277,7 +277,7 @@ Page.prototype = {
     for (var key in params) {
       this[key] = params[key]
     }
-    thsi.setView()
+    this.setView()
   },
   linkFirst: function () {
     if (this.index > 1) {
