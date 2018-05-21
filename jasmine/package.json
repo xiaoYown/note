@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test:unit": "jasmine JASMINE_CONFIG_PATH=unit/jasmine.json"
+  },
+  "devDependencies": {
+    "babel-register": "6.26.0",
+    "jasmine": "3.1.0"
+  }
+}

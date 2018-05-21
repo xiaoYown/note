@@ -27,7 +27,7 @@
 // Promise.race() // 竞速，完成一个即可
 
 var promise = new Promise(function(resolve, reject) {
-	if (/* 异步操作成功 */){
+	if (true/* 异步操作成功 */) {
 		resolve(value);
 	} else {
 		reject(error);
@@ -38,4 +38,4 @@ promise.then(function(value) {
 	// success
 	}, function(value) {
 	// failure
-});
+	});
