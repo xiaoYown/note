@@ -42,3 +42,4 @@ grunt/grunt_01/dist/
 jest/node_modules/
 node/koa/koa_02/
 jasmine/node_modules/
+node/pdf/node_modules/
