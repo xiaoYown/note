@@ -10,5 +10,4 @@ import AnyToTen from './any-to-ten';
 function  Conversion (num, hexFrom, hexTo) {
   return TenToAny(AnyToTen(num, hexFrom), hexTo);
 }
-console.log(Conversion(8, 10, 2));
 export default Conversion;
