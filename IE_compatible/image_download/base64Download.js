@@ -1,3 +1,7 @@
+/**
+ * base64 图片格式转换 blob 对象
+ * @param {String} base64 - base64 文件字符串 
+ */
 function base64Img2Blob(base64Data) {
   let format = "image/png"
   let base64 = base64Data
@@ -28,6 +32,7 @@ function base64Img2Blob(base64Data) {
 } 
 
 /**
+ * IE base64 图片格式下载
  * @param {string} fileName - 下载文件名.
  * @param {string} base64Data - base64 数据.
  */
