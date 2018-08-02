@@ -14,7 +14,10 @@ address 192.168.159.130
 netmask 255.255.255.0
 gateway 192.168.2.1
 ```
-
+* vim /etc/NetworkManager/NetworkManager.conf
+```
+managed=false 改成true
+```
 #### 2.设置dns
 ```
 vi /etc/resolvconf/resolv.conf.d/base
