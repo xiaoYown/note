@@ -26,9 +26,16 @@ app.on('will-quit', func)
 // Menu API 需要在程序 ready 之后调用
 const { Menu } = require('electron')
 
+// menu 模版
+let menuTemplate = [{
+    label,
+    role,
+    submenu,
+    click
+}]
 // menu 实例
-let menu = new Menu()
-
+let menu = (new Menu()).bindFormTemplate(menuTemplate)
+// 
 // 静态方法
 // 1.设置程序菜单(null 会溢出菜单)
 // 效果同窗口实例 browserWindow.setMenu(menu)
@@ -43,4 +50,30 @@ Menu.buildFromTemplate(template)
 // 实例方法
 
 ```
+
+#### 3.菜单项
+
+```javascript
+const { MenuItem } = require('electron')
+
+let menuItem = new MenuItem(options)
+
+```
+options:
+
+|key|类型|是否必要|作用|
+|-|-|-|-|
+|click|Function|N|菜单项点击回调|
+|role|String|N|内置事件|
+|type|String|N|-|
+|label|String|N|菜单项显示文本|
+|sublabel|String|N|-|
+|acceletator|Acceletator|N|-|
+|icon|NativeImage/String|N|-|
+|enabled|Boolean|N|设置false,菜单项置灰,不可点击|
+|visible|Boolean|N|设置false,菜单项被隐藏|
+|checked|Boolean|N|仅checkbox/radio类型菜单项可指定|
+|submenu|Array/Menu|N|只适用于submenu 类型的菜单项。 如果设置了 submenu, 则 type: 'submenu'配置可以省略。 如果该值不是 Menu , 则它将自动使用 Menu. buildFromTemplate将其转换为Menu。|
+|id|String|N||
+|position|String|N||
 
