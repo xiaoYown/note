@@ -1,21 +1,19 @@
 /** 内部滚动条区域 mousewheel 不会触发 body 的 mousewheel
  * param
  * wrap Element ---- scroll 元素
- * main Element ---- 使 scroll 元素 产生滚动条 元素
  * methods
  * init ---- 实例化后调用 init 进行事件绑定
  * destroy ---- 解绑事件
  */
 function ScrollWheel (option) {
   this.wrap = option.wrap
-  this.main = option.main
 }
 ScrollWheel.prototype = {
   status: '',
   init () {
     this.status = 'scroll'
     this.initMethods()
-    this.wrap.addEventListener('scroll', this.scroll)
+    this.wrap.addEventListener('scroll', this.scroll) // 触发 scroll 之后绑定 mousewheel 事件(没有滚动条则不会触发)
   },
   initMethods () {
     function bind (fn, ctx) {
@@ -36,18 +34,24 @@ ScrollWheel.prototype = {
   },
   scroll () {
     this.status = 'wheel'
-    this.wrap.addEventListener('mousewheel', this.wheel)
-    this.wrap.removeEventListener('scroll', this.scroll)
+    this.wrap.addEventListener('mousewheel', this.wheel) // 开始绑定 mousewheel 事件
+    this.wrap.removeEventListener('scroll', this.scroll) // 移除 scroll 事件
   },
   wheel (event) {
-    if (this.wrap.offsetHeight >= this.main.offsetHeight) return
-    let top = false, bottom = false, scrollTop = this.wrap.scrollTop
+    let atTop = false
+    let atBottom = false
+    let scrollTop = this.wrap.scrollTop
+    let scrollHeight = this.wrap.scrollHeight
+    let clientHeight = this.wrap.clientHeight
+
+    if (clientHeight === scrollHeight) return // 滚动区域高度 === 元素高度时
+
     if (scrollTop === 0) {
-      top = true
-    } else if (scrollTop + this.wrap.offsetHeight >= this.main.offsetHeight) {
-      bottom = true
+      atTop = true
+    } else if (scrollTop + clientHeight >= scrollHeight) {
+      atBottom = true
     }
-    if (top && event.deltaY < 0 || bottom && event.deltaY > 0) {
+    if (atTop && event.deltaY < 0 || atBottom && event.deltaY > 0) {
       event.preventDefault()
     }
   },
