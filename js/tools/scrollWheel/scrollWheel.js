@@ -9,9 +9,11 @@ function ScrollWheel (option) {
   this.wrap = option.wrap
 }
 ScrollWheel.prototype = {
-  status: '',
+  listener: '', // 当前实例监听事件 scroll: 初始化监听 -> mouseshell: 确认产生滚动后监听
+  listenAttr: '', // 滚轮方向判断属性 - deltaY | wheelDelta (没有不处理)
+
   init () {
-    this.status = 'scroll'
+    this.listener = 'scroll'
     this.initMethods()
     this.wrap.addEventListener('scroll', this.scroll) // 触发 scroll 之后绑定 mousewheel 事件(没有滚动条则不会触发)
   },
@@ -33,7 +35,7 @@ ScrollWheel.prototype = {
     }
   },
   scroll () {
-    this.status = 'wheel'
+    this.listener = 'wheel'
     this.wrap.addEventListener('mousewheel', this.wheel) // 开始绑定 mousewheel 事件
     this.wrap.removeEventListener('scroll', this.scroll) // 移除 scroll 事件
   },
@@ -44,6 +46,12 @@ ScrollWheel.prototype = {
     let scrollHeight = this.wrap.scrollHeight
     let clientHeight = this.wrap.clientHeight
 
+    if (!this.listenAttr) this.setListenAttr(event)
+
+    if (!this.listenAttr) { // 若无判断属性, 直接注销实例
+      this.destroy()
+    }
+
     if (clientHeight === scrollHeight) return // 滚动区域高度 === 元素高度时
 
     if (scrollTop === 0) {
@@ -51,14 +59,31 @@ ScrollWheel.prototype = {
     } else if (scrollTop + clientHeight >= scrollHeight) {
       atBottom = true
     }
-    if (atTop && event.deltaY < 0 || atBottom && event.deltaY > 0) {
-      event.preventDefault()
+
+    switch (this.listenAttr) {
+      case 'deltaY':
+        if (atTop && event.deltaY < 0 || atBottom && event.deltaY > 0) {
+          event.preventDefault()
+        }
+        break
+      case 'wheelDelta':
+        if (atTop && event.wheelDelta > 0 || atBottom && event.wheelDelta < 0) {
+          event.preventDefault()
+        }
+        break
+    }
+  },
+  setListenAttr (event) { // 确认滚动方向属性
+    if (event.deltaY) {
+      this.listenAttr = 'deltaY'
+    } else if (event.wheelDelta) {
+      this.listenAttr = 'wheelDelta'
     }
   },
   destroy () {
-    if (this.status === 'scroll') {
+    if (this.listener === 'scroll') {
       this.wrap.removeEventListener('scroll', this.scroll)
-    } else if (this.status === 'wheel') {
+    } else if (this.listener === 'wheel') {
       this.wrap.removeEventListener('mousewheel', this.wheel)
     }
   }
