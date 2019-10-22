@@ -1,0 +1,8 @@
+- v-once
+- v-html
+- v-bind
+- v-for
+- v-if
+- v-if / v-else / v-show
+- v-model
+- v-keep
