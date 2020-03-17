@@ -6,6 +6,8 @@ npm config set strict-ssl false
 npm config set registry "http://registry.npmjs.org/"
 一般这样运气的好的话，速度就会快许多，可能会安装成功。如果你还脸黑，这样设置还是一直卡住无法下载依赖，那就只能使用proxy代理方式来解决了，命令如下：
 
+> 淘宝镜像: https://registry.npm.taobao.org/
+
 3、设置npm获取的代理服务器地址：
 
 npm config set proxy=http://代理服务器ip:代理服务器端口
