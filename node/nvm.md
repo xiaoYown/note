@@ -15,4 +15,9 @@ source ~./bash_profile
 node 安装:
 nvm install 10.8.0
 nvm use --delete-prefix 10.8.0
+
+设置默认版本:
+
+nvm alias default <version> 
+如： nvm alias default v11.1.0
 ```

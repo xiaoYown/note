@@ -6,17 +6,17 @@
 //   console.log('update ' + key)
 // }
 
-// function observer (obj) {
+// function observe (obj) {
 //   if (typeof obj !== 'object') {
 //     return
 //   }
 //   for (let key in obj) {
-//     defineReacttive(obj, key, obj[key])
+//     defineReactive(obj, key, obj[key])
 //   }
 // }
 
-// function defineReacttive (obj, key, value) {
-//   observer(value);
+// function defineReactive (obj, key, value) {
+//   observe(value);
 //   Object.defineProperty(obj, key, {
 //     enumerable: true,
 //     configurable: true,

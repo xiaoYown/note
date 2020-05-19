@@ -1,2 +1,2 @@
-依赖: lib-flexible postcss-any2rem
+依赖: amfe-flexible postcss-any2rem
 
