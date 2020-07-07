@@ -30,7 +30,7 @@
     "koa-static2": "^0.1.8",
     "loader": "^2.1.1",
     "mysql": "^2.13.0",
-    "open": "0.0.5",
+    "open": "7.0.4",
     "socket.io": "^2.0.3",
     "time-stamp": "^1.0.1"
   }
