@@ -33,7 +33,7 @@ function observer (obj) {
     return obj;
   }
   if (Array.isArray(obj)) {
-    // 数组方法重新
+    // 数组方法重写
     Object.setPrototypeOf(obj, proto);
     ArrayObserver(obj);
   } else {

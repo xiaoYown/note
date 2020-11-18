@@ -21,7 +21,7 @@
 function fn1 () {
   console.log(this);
 }
-Function.prototype.bid = function (context) {
+Function.prototype.bind = function (context) {
   let _this = this;
   return function () {
     _this.apply(context);

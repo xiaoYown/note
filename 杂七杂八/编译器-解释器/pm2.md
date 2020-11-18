@@ -1,0 +1,1 @@
+pm2 start --name <app_name> npm -- run <script_name>
