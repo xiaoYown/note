@@ -7,22 +7,20 @@
 //     console.log(stdout);
 //   });
 // }
-const cluster = require("cluster");
+// const cluster = require("cluster");
 
 function createClient () {
   const { spawn } = require('child_process');
 
-  const subprocess = spawn('node', ['server.js'], {
+  const subprocess = spawn('node', ['repeater.js'], {
     detached: true,
-    // stdio: 'ignore'
+    stdio: 'ignore'
   });
 
   subprocess.unref();
 }
 
 function spawnFile () {
-  console.log(process.argv[2]);
-
   switch (process.argv[2]) {
     case 'start':
       createClient();
@@ -34,7 +32,11 @@ function spawnFile () {
   }
 }
 
-spawnFile();
+// spawnFile();
+
+// process.env.Z_S = 1;
+
+console.log(process.env);
 
 // console.log(cluster.isMaster)
 // if (cluster.isMaster) {
