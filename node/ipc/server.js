@@ -23,9 +23,9 @@ const removeFile = (name) => {
 function isServerActive () {
   return new Promise((resolve) => {
     try {
-      net
+      const client = net
         .createConnection({ path: ipcPath }, () => {
-          client.close();
+          client.end();
           resolve({ status: TEST_LINK_SUCCESS })
         })
         .on('error', error => {
