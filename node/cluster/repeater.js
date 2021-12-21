@@ -2,14 +2,14 @@ const net = require('net');
 const path = require('path');
 const { mkdirSync, writeFileSync } = require('fs');
 const constants = require('./constants');
-
+const { flowsCompose } = require('./flow-exec');
 const {
-  flowsCompose,
   isFolder,
   isFile,
   json2yaml,
   getRepeaterIpcPath,
 } = require('./utils');
+
 
 function isRepeaterServiceActive () {
   return new Promise((resolve) => {
@@ -34,13 +34,20 @@ function isRepeaterServiceActive () {
   });
 }
 
-function tryCreateRepeaterService (ctlPath) {
-  net
-    .createServer()
-    .listen(ctlPath);
+function isSocketPathFileExist (name) {
+  return isFile(name);
 }
 
-function tryCreateRepeaterService() {
+function tryCreateRepeaterService (ctlPath) {
+  isRepeaterServiceActive()
+    .then(({ status }) => {
+      net
+        .createServer()
+        .listen(ctlPath);
+    })
+    .catch(error => {
+      console.log('Create repeater service failed.')
+    })
 }
 
 /** 生成配置文件默认内容 */

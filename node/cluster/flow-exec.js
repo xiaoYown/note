@@ -1,10 +1,5 @@
-function isPromise(obj) {
-  return Object.prototype.toString.call(obj) === "[object Promise]";
-};
+const { isPromise, isFunction } = require('./utils');
 
-function isFunction(obj) {
-  return Object.prototype.toString.call(obj) === "[object Function]";
-};
 class FlowExec {
 
   isPending = false;
@@ -15,8 +10,10 @@ class FlowExec {
     if (this.isPending) {
       this.tasks.push(fn);
       return;
+    } else {
+      this.do(fn);
     }
-    this.do(fn);
+    return this;
   }
 
   do = (fn) => {
@@ -41,6 +38,14 @@ class FlowExec {
         });
       return;
     }
-    console.log('Task type error!');
+    if (typeof next !== 'undefined') {
+      console.log('Task type error, now use ' + Object.prototype.toString.call(next));
+    }
   }
 }
+
+function flowsCompose () {
+  return new FlowExec();
+}
+
+exports.flowsCompose = flowsCompose;
