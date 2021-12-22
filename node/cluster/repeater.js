@@ -5,6 +5,7 @@ const constants = require("./constants");
 const { flowsCompose } = require("./flow-exec");
 const { isFolder, isFile, json2yaml, getRepeaterIpcPath } = require("./utils");
 
+/** 判断中继器服务是否已启动 */
 function isRepeaterServiceActive() {
   return new Promise((resolve) => {
     try {
@@ -28,10 +29,12 @@ function isRepeaterServiceActive() {
   });
 }
 
+/** 判断是否存在通信文件 */
 function isSocketPathFileExist(name) {
   return isFile(name);
 }
 
+/** 尝试创建中继器服务 */
 function tryCreateRepeaterService(ctlPath) {
   return () => isRepeaterServiceActive()
     .then(({ status }) => {
@@ -83,8 +86,8 @@ function createRepeaterSettingFileDefaultContent() {
   return json2yaml(content);
 }
 
-/** 创建客户端配置 */
-function createClientsSettingFileContent() {
+/** 创建客户端配置文件默认内容 */
+function createClientsSettingFileDefaultContent() {
   const time = new Date().toLocaleString();
   const content = {
     name: "lang-manage-clients",
@@ -120,7 +123,8 @@ function tryCreateSettingFile(name, content) {
   };
 }
 
-function initializeSettings() {
+/** 尝试生成配置文件 */
+function tryCreateSettingFiles() {
   flowsCompose()
     .exec(tryCreateSettingFolder)
     .exec(
@@ -132,35 +136,16 @@ function initializeSettings() {
     .exec(
       tryCreateSettingFile(
         path.join(constants.settingFolder, constants.clientsSettingFilename),
-        createClientsSettingFileContent()
+        createClientsSettingFileDefaultContent()
       )
     );
 }
 
-/* 中继器是否处于激活状态 */
-function isActive() {}
-
-function startRepeater() {
-  if (isActive()) {
-    return;
-  }
-  // return function () {
-  //   const server = net.createServer((socket) => {
-  //     socket.end('goodbye\n');
-  //   }).on('error', (err) => {
-  //     // 在这里处理错误。
-  //     throw err;
-  //   });
-
-  //   // 获取任意未使用的端口。
-  //   server.listen(4000, () => {
-  //     console.log('opened server on', server.address());
-  //   });
-  // };
-}
-
+/** 执行启动流程 */
 function execRepeaterFlows() {
-  flowsCompose().exec(initializeSettings).exec(startRepeater);
+  flowsCompose()
+    .exec(tryCreateSettingFiles)
+    .exec(tryCreateRepeaterService);
 }
 
 function start() {
