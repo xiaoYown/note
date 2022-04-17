@@ -43,3 +43,4 @@ jest/node_modules/
 node/koa/koa_02/
 jasmine/node_modules/
 node/pdf/node_modules/
+node/cluster/.xv-lang-manage
