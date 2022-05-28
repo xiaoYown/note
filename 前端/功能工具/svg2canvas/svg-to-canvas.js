@@ -1,9 +1,9 @@
 /**
-* img_h  生成 img 宽高
-* img_w  
-* el_h   元素宽高
-* el_w 
-*/
+ * img_h  生成 img 宽高
+ * img_w
+ * el_h   元素宽高
+ * el_w
+ */
 /* example
     convert(option, function(canvas) {
         _this.postStyle.call(_this, {
@@ -15,17 +15,20 @@
         });
     });
 */
-module.exports = function convert(option, cb) {
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    var image = new Image();
 
-    image.onload = function load() {
-        canvas.height = option.img_h;
-        canvas.width  = option.img_w;
+function convert(option, cb) {
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+  var image = new Image();
 
-        ctx.drawImage(image, (option.img_w - option.el_w)/2, (option.img_h - option.el_h)/2, option.el_w, option.el_h);
-        cb(canvas);
-    };
-    image.src = 'data:image/svg+xml;charset-utf-8,' + encodeURIComponent(option.svg.outerHTML);
-};
+  image.onload = function load() {
+    canvas.width = option.width;
+    canvas.height = option.height;
+
+    ctx.drawImage(image, 0, 0, option.width, option.height);
+    cb(canvas);
+  };
+  image.src =
+    "data:image/svg+xml;charset-utf-8," +
+    encodeURIComponent(option.svg.outerHTML);
+}
