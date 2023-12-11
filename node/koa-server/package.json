@@ -5,7 +5,7 @@
     "start": "ts-node --project ./tsconfig.json -r ./node_modules/tsconfig-paths/register ./src/app"
   },
   "dependencies": {
-    "@koa/cors": "^3.1.0",
+    "@koa/cors": "^5.0.0",
     "@types/koa-router": "^7.4.4",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
