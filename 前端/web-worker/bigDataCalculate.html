@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Worker pool in the browser</title>
+
+  <script src="../../dist/workerpool.js"></script>
+
+  <style>
+    :root {
+      overflow: hidden;
+      /* hides any part of the sun below the horizon */
+      background-color: lightblue;
+      /* display: flex;
+      justify-content: center; */
+      /* centers the sun in the background */
+    }
+
+    .sun {
+      background-color: yellow;
+      border-radius: 50%;
+      /* creates a circular background */
+      height: 100px;
+      /* makes the sun the size of the viewport */
+      aspect-ratio: 1 / 1;
+      animation: 2s linear 0s infinite alternate sun-rise;
+    }
+
+    @keyframes sun-rise {
+      from {
+        /* pushes the sun down past the viewport */
+        transform: translateX(200px);
+      }
+
+      to {
+        /* returns the sun to its default position */
+        transform: translateX(0);
+      }
+    }
+
+    #number {
+      margin: 20px;
+      border: 1px solid #000;
+      min-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sun"></div>
+
+  <div id="number"></div>
+
+  <button id="async">calculate async</button>
+  <button id="sync">calculate sync</button>
+
+  <script>
+    const level = 41;
+
+    function fibonacci(n) {
+      if (n < 2) return n;
+      return fibonacci(n - 2) + fibonacci(n - 1);
+    }
+
+    function markStart(way) {
+      console.time(way);
+      const el = document.getElementById('number');
+      el.innerText = 'Status: done \n result: ' + null + '\n time: ' + new Date();
+    }
+
+    function markEnd(way, data) {
+      const el = document.getElementById('number');
+      el.innerText = 'Status: done \n result: ' + data + '\n time: ' + new Date();
+      console.timeEnd(way);
+    }
+
+    function calculateAsync() {
+      markStart('async')
+
+      const pool = workerpool.pool();
+
+      pool.exec(fibonacci, [level])
+        .then(result => {
+          markEnd('async', result)
+        })
+    }
+
+    function calculateSync() {
+      markStart('sync')
+      // HACK: 同步运行, 浏览器会在 js 执行栈清空时更新 element
+      setTimeout(() => {
+        const result = fibonacci(level)
+        markEnd('sync', result)
+      }, 10)
+    }
+
+    function main() {
+      document.getElementById('async').addEventListener('click', function () {
+        calculateAsync()
+      })
+      document.getElementById('sync').addEventListener('click', function () {
+        calculateSync()
+      })
+    }
+
+    main()
+
+    // NOTE: 尝试不同的运行方式刷新页面, 同步的明显存在卡顿, 使用 web worker 执行则非常顺滑
+    // calculateSync();
+    // calculateAsync();
+
+  </script>
+
+</body>
+
+</html>
